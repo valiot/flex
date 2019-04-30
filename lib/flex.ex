@@ -1,6 +1,6 @@
 defmodule Flex do
   @moduledoc """
-  Documentation for Flex.
+  All structs definition.
   """
 
   @doc """
@@ -12,7 +12,16 @@ defmodule Flex do
       :world
 
   """
-  def hello do
-    :world
+  defmodule FuzzySet do
+    defstruct mf: nil
+    def new(opt) do
+      mf = Keyword.fetch!(opt, :mf)
+      %FuzzySet{mf: mf}
+    end
+  end
+
+  defmodule FuzzyRule do
+    defstruct antecedent: nil,
+              consequent: nil
   end
 end
