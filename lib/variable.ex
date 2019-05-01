@@ -1,10 +1,10 @@
 defmodule Flex.Variable do
-  alias Flex.Variable
+  alias Flex.{Variable}
 
   use Agent, restart: :permanent
 
   defstruct fuzzy_sets: nil,
-            mf_value: nil,
+            mf_values: nil,
             range: nil,
             type: nil
 
@@ -20,17 +20,25 @@ defmodule Flex.Variable do
     Agent.get(pid, fn state -> state end)
   end
 
-  defp init(params) do
-    range = begin..final = Keyword.fetch!(params, :range)
-    fuzzy_sets = Keyword.fetch!(params, :fuzzy_sets)
-    n_sets = Enum.count(fuzzy_sets)
-    spacing = (final-begin)/n_sets
-    #n_fuzzy_sets = generate_mf(fuzzy_sets, begin, final, spacing, [])
-    #procesar fuzzy sets.
-    %Variable{range: range, fuzzy_sets: fuzzy_sets}
+  def fuzzification(input, pid) do
+    Agent.update(pid, fn state ->
+      res = _fuzzification(input, state.fuzzy_sets, %{})
+      %{state | mf_values: res}
+    end)
   end
 
-  # def automf([fs | tail], begin, spacing, acc) do
-  #   nil
-  # end
+  defp init(params) do
+    range = Keyword.fetch!(params, :range)
+    fuzzy_sets = Keyword.fetch!(params, :fuzzy_sets)
+    type = Keyword.fetch!(params, :type)
+    %Variable{range: range, fuzzy_sets: fuzzy_sets, type: type}
+  end
+
+  def _fuzzification(_input, [], acc), do: acc
+  def _fuzzification(input, [fs | tail], acc) do
+    mu = fs.mf.(input)
+    key = fs.tag
+    acc = Map.put(acc, key, mu)
+    _fuzzification(input, tail, acc)
+  end
 end

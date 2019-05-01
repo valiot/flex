@@ -3,7 +3,8 @@ defmodule Flex.MembershipFun do
   Module for membership functions.
   #TODO: make mf with its own parameters
   """
-  def saturation([a, b]) do
+  def shoulder([a, b]) do
+    [a, b]
     fn(x) ->
       cond do
         #Left side
@@ -19,7 +20,7 @@ defmodule Flex.MembershipFun do
     end
   end
 
-  def shoulder([a, b]) do
+  def saturation([a, b]) do
     fn(x) ->
       cond do
         #Left side

@@ -9,25 +9,21 @@ defmodule Flex.Set do
   def new(opt) do
     mf_type = Keyword.fetch!(opt, :mf_type)
     tag = Keyword.fetch!(opt, :tag)
-    %Set{mf_type: mf_type,tag: tag}
-  end
-
-  def set_mf(fuzzy_set) do
-    params = fuzzy_set.mf_params
-
+    mf_params = Keyword.fetch!(opt, :mf_params)
     mf =
-      case fuzzy_set.mf_type do
+      case mf_type do
         "saturation" ->
-          MembershipFun.saturation(params)
+          MembershipFun.saturation(mf_params)
         "shoulder" ->
-          MembershipFun.shoulder(params)
+          MembershipFun.shoulder(mf_params)
         "triangle" ->
-          MembershipFun.triangle(params)
+          MembershipFun.triangle(mf_params)
         "trapezoidal" ->
-          MembershipFun.trapezoidal(params)
+          MembershipFun.trapezoidal(mf_params)
         _ ->
           raise("Membership function not supported")
       end
-    %{fuzzy_set | mf: mf}
+
+    %Set{mf_type: mf_type, tag: tag, mf: mf, mf_params: mf_params}
   end
 end

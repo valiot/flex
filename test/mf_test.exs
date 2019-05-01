@@ -25,8 +25,8 @@ defmodule MfTest do
     assert mf.(40) == 0
   end
 
-  test "Saturation mf" do
-    mf = MembershipFun.saturation([1, 2])
+  test "Shoulder mf" do
+    mf = MembershipFun.shoulder([1, 2])
     assert mf.(0.5) == 0
     assert mf.(1) == 0
     assert mf.(1.5) == 0.5
@@ -35,8 +35,8 @@ defmodule MfTest do
     assert mf.(40) == 1
   end
 
-  test "Shoulder mf" do
-    mf = MembershipFun.shoulder([1, 2])
+  test "saturation mf" do
+    mf = MembershipFun.saturation([1, 2])
     assert mf.(0.5) == 1
     assert mf.(1) == 1
     assert mf.(1.5) == 0.5
