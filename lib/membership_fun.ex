@@ -1,9 +1,42 @@
 defmodule Flex.MembershipFun do
   @moduledoc """
-  Module for membership function.
+  Module for membership functions.
+  #TODO: make mf with its own parameters
   """
-  def triangle do
-    fn(x, a, b, c) ->
+  def saturation([a, b]) do
+    fn(x) ->
+      cond do
+        #Left side
+        a != b and a < x and x < b ->
+          (x - a) / (b - a)
+        #Right side
+        x >= b ->
+          1
+        #Catch all
+        true ->
+          0
+      end
+    end
+  end
+
+  def shoulder([a, b]) do
+    fn(x) ->
+      cond do
+        #Left side
+        x <= a ->
+          1
+        #Right side
+        a != b and a < x and x < b ->
+          (a - x) / (a - b)
+        #Catch all
+        true ->
+          0
+      end
+    end
+  end
+
+  def triangle([a, b, c]) do
+    fn(x) ->
       cond do
         #Left side
         a != b and a < x and x < b ->
@@ -21,8 +54,8 @@ defmodule Flex.MembershipFun do
     end
   end
 
-  def trapezoidal do
-    fn(x, a, b, c, d) ->
+  def trapezoidal([a, b, c, d]) do
+    fn(x) ->
       cond do
         #Left side
         a != b and a < x and x < b ->

@@ -25,12 +25,12 @@ defmodule Flex.Variable do
     fuzzy_sets = Keyword.fetch!(params, :fuzzy_sets)
     n_sets = Enum.count(fuzzy_sets)
     spacing = (final-begin)/n_sets
-    n_fuzzy_sets = generate_mf(fuzzy_sets, begin, final, spacing)
+    #n_fuzzy_sets = generate_mf(fuzzy_sets, begin, final, spacing, [])
     #procesar fuzzy sets.
-    %Variable{range: range, fuzzy_sets: n_fuzzy_sets}
+    %Variable{range: range, fuzzy_sets: fuzzy_sets}
   end
 
-  def generate_mf(fuzzy_sets, begin, final, spacing) do
-    nil
-  end
+  # def automf([fs | tail], begin, spacing, acc) do
+  #   nil
+  # end
 end
