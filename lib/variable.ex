@@ -1,17 +1,19 @@
 defmodule Flex.Variable do
   alias Flex.Variable
 
-  defstruct fuzzy_sets: nil,
+  defstruct tag: nil,
+            fuzzy_sets: nil,
             mf_values: %{},
             range: nil,
             tmp: nil,
             type: nil
 
   def new(params) do
+    tag = Keyword.fetch!(params, :tag)
     range = Keyword.fetch!(params, :range)
     fuzzy_sets = Keyword.fetch!(params, :fuzzy_sets)
     type = Keyword.fetch!(params, :type)
-    %Variable{range: range, fuzzy_sets: fuzzy_sets, type: type}
+    %Variable{range: range, fuzzy_sets: fuzzy_sets, type: type, tag: tag}
   end
 
   def fuzzification(%Variable{type: type} = fuzzy_var, input) when type == :antecedent do
@@ -29,6 +31,7 @@ defmodule Flex.Variable do
     map_all_mf(tail, input, acc)
   end
 
+  @spec defuzzification(any(), any()) :: :error | Flex.Variable.t()
   def defuzzification(%Variable{type: type} = fuzzy_var, input) when type == :consequent do
     res = fuzzy_to_crisp(fuzzy_var.fuzzy_sets, input, 0, 0)
     %{fuzzy_var | mf_values: res}
