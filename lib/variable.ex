@@ -2,8 +2,9 @@ defmodule Flex.Variable do
   alias Flex.Variable
 
   defstruct fuzzy_sets: nil,
-            mf_values: nil,
+            mf_values: %{},
             range: nil,
+            tmp: nil,
             type: nil
 
   def new(params) do
