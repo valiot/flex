@@ -3,6 +3,7 @@ defmodule Flex.Set do
 
   defstruct mf_type: nil,
             mf: nil,
+            mf_center: nil,
             mf_params: nil,
             tag: nil
 
@@ -10,7 +11,7 @@ defmodule Flex.Set do
     mf_type = Keyword.fetch!(opt, :mf_type)
     tag = Keyword.fetch!(opt, :tag)
     mf_params = Keyword.fetch!(opt, :mf_params)
-    mf =
+    {mf, c} =
       case mf_type do
         "saturation" ->
           MembershipFun.saturation(mf_params)
@@ -24,6 +25,6 @@ defmodule Flex.Set do
           raise("Membership function not supported")
       end
 
-    %Set{mf_type: mf_type, tag: tag, mf: mf, mf_params: mf_params}
+    %Set{mf_type: mf_type, tag: tag, mf: mf, mf_params: mf_params, mf_center: c}
   end
 end

@@ -4,7 +4,7 @@ defmodule MfTest do
   doctest Flex
 
   test "Triangle mf" do
-    mf = MembershipFun.triangle([1, 2, 3])
+    {mf, _c} = MembershipFun.triangle([1, 2, 3])
     assert mf.(1) == 0
     assert mf.(1.5) == 0.5
     assert mf.(2) == 1
@@ -14,7 +14,7 @@ defmodule MfTest do
   end
 
   test "Trapezoidal mf" do
-    mf = MembershipFun.trapezoidal([1, 2, 3, 4])
+    {mf, _c} = MembershipFun.trapezoidal([1, 2, 3, 4])
     assert mf.(1) == 0
     assert mf.(1.5) == 0.5
     assert mf.(2) == 1
@@ -26,7 +26,7 @@ defmodule MfTest do
   end
 
   test "Shoulder mf" do
-    mf = MembershipFun.shoulder([1, 2])
+    {mf, _c} = MembershipFun.shoulder([1, 2, 4])
     assert mf.(0.5) == 0
     assert mf.(1) == 0
     assert mf.(1.5) == 0.5
@@ -36,7 +36,7 @@ defmodule MfTest do
   end
 
   test "saturation mf" do
-    mf = MembershipFun.saturation([1, 2])
+    {mf, _c} = MembershipFun.saturation([1, 2, 4])
     assert mf.(0.5) == 1
     assert mf.(1) == 1
     assert mf.(1.5) == 0.5
