@@ -33,8 +33,12 @@ defmodule VariableTest do
     t_c = Set.new(tag: "too cold", mf_type: "shoulder", mf_params: [0, 50, 100])
 
     fuzzy_sets = [t_h, j_r, t_c]
-    error = Variable.new(tag: "error", fuzzy_sets: fuzzy_sets, type: :consequent, range: -100..100)
-    n_error = Variable.defuzzification(error, [0.866, 0.5, 0])
-    assert Float.floor(n_error.mf_values, 1) == -63.4
+
+    error =
+      Variable.new(tag: "error", fuzzy_sets: fuzzy_sets, type: :consequent, range: -100..100)
+
+    error = %{error | tmp: [0.866, 0.5, 0]}
+    output = Variable.defuzzification(error)
+    assert Float.floor(output, 1) == -63.4
   end
 end

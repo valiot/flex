@@ -11,16 +11,21 @@ defmodule Flex.Set do
     mf_type = Keyword.fetch!(opt, :mf_type)
     tag = Keyword.fetch!(opt, :tag)
     mf_params = Keyword.fetch!(opt, :mf_params)
+
     {mf, c} =
       case mf_type do
         "saturation" ->
           MembershipFun.saturation(mf_params)
+
         "shoulder" ->
           MembershipFun.shoulder(mf_params)
+
         "triangle" ->
           MembershipFun.triangle(mf_params)
+
         "trapezoidal" ->
           MembershipFun.trapezoidal(mf_params)
+
         _ ->
           raise("Membership function not supported")
       end
