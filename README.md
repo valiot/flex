@@ -1,6 +1,12 @@
 # Flex
 
-**TODO: Add description**
+A WIP toolkit for fuzzy logic, this library includes functions for creating fuzzy variables, fuzzy sets, rules and a FLS.
+
+**TODO: Refactor.**
+
+## Usage
+
+In `test/system_test.exs` there is an example of use, that is based on this [example](http://robotics.ee.uwa.edu.au/courses/faulttolerant/notes/FT5.pdf)
 
 ## Installation
 
