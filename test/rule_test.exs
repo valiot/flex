@@ -132,7 +132,7 @@ defmodule RuleTest do
       n_dt_error.tag => n_dt_error
     }
 
-    output = Rule.inference_engine([rule1, rule2], antecedents, output)
+    output = Flex.System.inference_engine(antecedents, [rule1, rule2], output)
     assert output.mf_values["cool"] == [0]
     assert output.mf_values["heat"] == [0.5]
   end

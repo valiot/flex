@@ -6,6 +6,7 @@ defmodule Flex.System do
   require Logger
 
   alias Flex.Variable
+  import Flex.Rule
 
   defmodule State do
     @moduledoc false
@@ -51,9 +52,7 @@ defmodule Flex.System do
   def handle_call({:compute, input}, _from, state) do
     output =
       input
-      #
       |> fuzzification(state.lt_ant, state.antecedent)
-      # fz output var
       |> inference_engine(state.rules, state.consequent)
       |> output_combination()
       |> defuzzification()
@@ -73,7 +72,15 @@ defmodule Flex.System do
 
   def inference_engine(antecedents, [rule | tail], consequent) do
     rule_params = get_spec_antecedents(rule.antecedent, antecedents, []) ++ [consequent]
-    consequent = rule.statement.(rule_params)
+
+    consequent =
+      if is_function(rule.statement) do
+        rule.statement.(rule_params)
+      else
+        args = Map.merge(antecedents, %{consequent.tag => consequent})
+        statement(rule.statement, args)
+      end
+
     inference_engine(antecedents, tail, consequent)
   end
 
@@ -98,4 +105,19 @@ defmodule Flex.System do
   end
 
   def defuzzification(fuzzy_output), do: Variable.defuzzification(fuzzy_output)
+
+  def statement({arg1, arg2, "&&&"}, args), do: statement(arg1, args) &&& statement(arg2, args)
+  def statement({arg1, arg2, "|||"}, args), do: statement(arg1, args) ||| statement(arg2, args)
+  def statement({var_tag, set_tag, "~>"}, args) when is_binary(var_tag) do
+    fuzzy_var = Map.get(args, var_tag, :error)
+    fuzzy_var ~> set_tag
+  end
+  def statement({consequent, set_tag, "~>"}, args), do: statement(consequent, args) ~> set_tag
+
+  def statement({arg1, con_tag, ">>>"}, args) do
+    val = statement(arg1, args)
+    consequent = Map.get(args, con_tag)
+    val >>> consequent
+  end
+  def statement(arg, _args), do: arg
 end

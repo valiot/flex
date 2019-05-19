@@ -38,21 +38,4 @@ defmodule Flex.Rule do
     consequent = Keyword.fetch!(params, :consequent)
     %Rule{statement: rule, antecedent: antecedent, consequent: consequent}
   end
-
-  # ant debe ser mapa
-  def inference_engine([], _antecedents, consequent), do: consequent
-
-  def inference_engine([rule | tail], antecedents, consequent) do
-    rule_params = get_spec_antecedents(rule.antecedent, antecedents, []) ++ [consequent]
-    consequent = rule.statement.(rule_params)
-    inference_engine(tail, antecedents, consequent)
-  end
-
-  def get_spec_antecedents([], _antecedents, lt_ant_vars), do: lt_ant_vars
-
-  def get_spec_antecedents([tag | tail], antecedents, lt_ant_vars) do
-    f_var = Map.get(antecedents, tag)
-    lt_ant_vars = lt_ant_vars ++ [f_var]
-    get_spec_antecedents(tail, antecedents, lt_ant_vars)
-  end
 end
