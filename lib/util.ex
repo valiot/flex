@@ -1,4 +1,3 @@
-
 defmodule Flex.Util do
-  # funciones de ayuda "normalización, desnormalización"
+  # TODO: normaliztion and denormalization
 end

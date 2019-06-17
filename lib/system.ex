@@ -108,10 +108,12 @@ defmodule Flex.System do
 
   def statement({arg1, arg2, "&&&"}, args), do: statement(arg1, args) &&& statement(arg2, args)
   def statement({arg1, arg2, "|||"}, args), do: statement(arg1, args) ||| statement(arg2, args)
+
   def statement({var_tag, set_tag, "~>"}, args) when is_binary(var_tag) do
     fuzzy_var = Map.get(args, var_tag, :error)
     fuzzy_var ~> set_tag
   end
+
   def statement({consequent, set_tag, "~>"}, args), do: statement(consequent, args) ~> set_tag
 
   def statement({arg1, con_tag, ">>>"}, args) do
@@ -119,5 +121,6 @@ defmodule Flex.System do
     consequent = Map.get(args, con_tag)
     val >>> consequent
   end
+
   def statement(arg, _args), do: arg
 end
