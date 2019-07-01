@@ -2,12 +2,11 @@
 <div align="center">
   <img src="assets/valiot-logo-blue.png" alt="Valiot Logo" width="192" height="57" />
 </div>
-<br>
-***
+<br>  
 
-# Flex
+# FLex
 
-A WIP toolkit for fuzzy logic, this library includes functions to make fuzzy sets, variables and rules for creating a Fuzzy Logic System (FLS).
+A toolkit for fuzzy logic, this library includes functions to make fuzzy sets, variables and rules for creating a Fuzzy Logic System (FLS).
 
 The goal of the FLex is to easily design and efficiently operate fuzzy logic controllers without relying on external libraries.
 
@@ -18,7 +17,6 @@ The goal of the FLex is to easily design and efficiently operate fuzzy logic con
 * [Installation](#installation)
 
 * [Usage](#usage)
-
     * [Sets](#sets)
     * [Variables](#variables)
     * [Rules](#rules)
@@ -208,4 +206,8 @@ The docs can be found at [https://hexdocs.pm/flex](https://hexdocs.pm/flex).
   See [LICENSE](./LICENSE).
 
 ## TODO
-**TODO: Refactor.**
+  * Add more membership functions.
+  * Add more inference methods.
+  * Add more defuzzification methods.
+  * Add helper functions.
+  * Add metaprogramming for linguistic rules.
