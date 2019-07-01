@@ -1,3 +1,5 @@
 defmodule Flex.Util do
-  # TODO: normaliztion and denormalization
+  @moduledoc """
+  Module with helper functions.
+  """
 end
