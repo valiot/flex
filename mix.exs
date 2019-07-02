@@ -10,12 +10,14 @@ defmodule Flex.MixProject do
       deps: deps(),
       description: description(),
       name: "FLex",
+      package: package(),
       source_url: "https://github.com/valiot/flex",
       aliases: aliases(),
       docs: [
         main: "readme",
         extras: ["README.md"]
       ]
+
     ]
   end
 
@@ -39,6 +41,21 @@ defmodule Flex.MixProject do
     |> Enum.each(fn x ->
       File.cp!("assets/#{x}", "doc/assets/#{x}")
     end)
+  end
+
+  defp package() do
+    [
+      files: [
+        "lib",
+        "test",
+        "mix.exs",
+        "README.md",
+        "LICENSE"
+      ],
+      maintainers: ["valiot"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/valiot/flex"}
+    ]
   end
 
   # Run "mix help deps" to learn about dependencies.
