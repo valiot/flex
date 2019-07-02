@@ -1,8 +1,12 @@
 defmodule Flex.MembershipFun do
   @moduledoc """
-  Module for membership functions.
-  #TODO: make mf with its own parameters
+  An interface to create Membership Functions reference.
   """
+
+  @doc """
+  Shoulder membership function.
+  """
+  @spec shoulder([...]) :: {fun(), any}
   def shoulder([a, b, c]) do
     mu = fn x ->
       cond do
@@ -20,10 +24,13 @@ defmodule Flex.MembershipFun do
       end
     end
 
-    # membershipfunction
     {mu, c}
   end
 
+  @doc """
+  Saturation membership function.
+  """
+  @spec saturation([...]) :: {fun(), any}
   def saturation([a, b, c]) do
     mu = fn x ->
       cond do
@@ -44,6 +51,10 @@ defmodule Flex.MembershipFun do
     {mu, c}
   end
 
+  @doc """
+  Triangle membership function.
+  """
+  @spec triangle([...]) :: {fun(), any}
   def triangle([a, b, c]) do
     mu = fn x ->
       cond do
@@ -68,6 +79,10 @@ defmodule Flex.MembershipFun do
     {mu, b}
   end
 
+  @doc """
+  Trapezoidal membership function.
+  """
+  @spec trapezoidal([...]) :: {fun(), any}
   def trapezoidal([a, b, c, d]) do
     ctr = (c - b) / 2
 
