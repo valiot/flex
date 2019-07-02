@@ -8,7 +8,7 @@
 
 A toolkit for fuzzy logic, this library includes functions to make fuzzy sets, variables and rules for creating a Fuzzy Logic System (FLS).
 
-The goal of the FLex is to easily design and efficiently operate fuzzy logic controllers without relying on external libraries.
+The goal of FLex is to easily design and efficiently operate fuzzy logic controllers without relying on external libraries.
 
 ## Index
 
@@ -70,7 +70,7 @@ end
 ***
 ### Sets
 **Step 1:** Define all fuzzy sets with `Flex.Set.new/1`, the following options are require:
-  - `mf_type` - (string) Defines which type of membership function use the set (e.g., "triangle").
+  - `mf_type` - (string) Defines which type of membership function uses the set (e.g., "triangle").
   - `tag` - (string) defines the linguistic name of the fuzzy set (e.g., "too hot"),
   - `mf_params` - The parameters of the membership function, see Membership functions.
 
@@ -92,7 +92,7 @@ he = Flex.Set.new(tag: "heat", mf_type: "shoulder", mf_params: [0, 50, 100])
   * `:tag` - (string) Defines the linguistic name of the fuzzy variable (e.g., "error"),
   * `:fuzzy_sets` - (list) Defines which type of membership function use the set (e.g., "triangle").
   * `:type` - (atom) Defines the type of variable (e.g., :antecedent or :consequent),
-  * `:range` - (range) The range in which the variable exist.
+  * `:range` - (range) The range in which the variable exists.
 
 ```elixir
 fuzzy_sets = [t_h, j_r, t_c]
@@ -177,7 +177,7 @@ Currently there are two types of syntax for defining the rules `statement`:
 
 ### System
 **Step 4:** Define FLS with `Flex.System.start_link/1` or `Flex.System.start_link/2` if you want to overwrite the GenServer options; the following options are require:
-  - `:rules` - Defines the behavior of the system based on the a list of rules.
+  - `:rules` - Defines the behavior of the system based on a list of rules.
   - `:antecedent` - (list) Defines the input variables.
   - `:consequent` - Defines the output variable.
 

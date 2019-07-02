@@ -16,7 +16,7 @@ defmodule Flex.Variable do
   - `:tag` - (string) Defines the linguistic name of the fuzzy variable (e.g., "error").
   - `:fuzzy_sets` - (list) Defines which all the fuzzy sets related to the variable.
   - `:mf_values` - (map) The current values of each of the membership functions of the fuzzy sets.
-  - `:range` - (range) The range in which the variable exist.
+  - `:range` - (range) The range in which the variable exists.
   - `:type` - (atom) :antecedent if the variable is an input or consequent for outputs.
   """
   @type t :: %__MODULE__{
@@ -34,7 +34,7 @@ defmodule Flex.Variable do
     * `:tag` - (string) Defines the linguistic name of the fuzzy variable (e.g., "error"),
     * `:fuzzy_sets` - (list) Defines which type of membership function use the set (e.g., "triangle").
     * `:type` - (atom) Defines the type of variable (e.g., :antecedent or :consequent),
-    * `:range` - (range) The range in which the variable exist.
+    * `:range` - (range) The range in which the variable exists.
   """
   @spec new(keyword) :: Flex.Variable.t()
   def new(params) do

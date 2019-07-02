@@ -35,7 +35,7 @@ defmodule Flex.System do
   Spawns a Fuzzy Logic System.
 
   The following options are require:
-    - `:rules` - Defines the behavior of the system based on the a list of rules.
+    - `:rules` - Defines the behavior of the system based on a list of rules.
     - `:antecedent` - (list) Defines the input variables.
     - `:consequent` - Defines the output variable.
   """

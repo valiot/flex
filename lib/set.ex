@@ -12,7 +12,7 @@ defmodule Flex.Set do
 
   @typedoc """
   Fuzzy Set struct.
-  - `:mf_type` - Defines which type of membership function use the set.
+  - `:mf_type` - Defines which type of membership function uses the set.
   - `:mf` - Anonymous function reference of the membership function.
   - `:mf_center` - The center point of the membership function.
   - `:mf_params` - The parameters of the membership function.
@@ -30,7 +30,7 @@ defmodule Flex.Set do
   Creates a Fuzzy set.
 
   The following options are require:
-    * `:mf_type` - (string) Defines which type of membership function use the set (e.g., "triangle").
+    * `:mf_type` - (string) Defines which type of membership function uses the set (e.g., "triangle").
     * `:tag` - (string) defines the linguistic name of the fuzzy set (e.g., "too hot"),
     * `:mf_params` - The parameters of the membership function, see Membership functions.
   """
