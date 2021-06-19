@@ -2,6 +2,7 @@ defmodule Flex.MembershipFun do
   @moduledoc """
   An interface to create Membership Functions reference.
   """
+  import :math
 
   @doc """
   Shoulder membership function.
@@ -107,5 +108,70 @@ defmodule Flex.MembershipFun do
     end
 
     {mu, ctr}
+  end
+
+  @doc """
+  Gaussian membership function.
+    * `m` - (number) Mean,
+    * `s` - (number) Standard deviation, it must not be equal to 0.
+    * `f` - (number) Fuzzification Factor,
+  """
+  @spec gaussian([...]) :: {fun(), any}
+  def gaussian([m, s, f]) when s != 0 do
+    mu = fn x ->
+      (pow(x - m, 2) / pow(s, 2))
+      |> abs()
+      |> pow(f)
+      |> Kernel.*(-0.5)
+      |> exp()
+    end
+
+    {mu, m}
+  end
+
+  def gaussian([_c, s, _m]), do: raise(ArgumentError, "Bad standard deviation: #{s}")
+
+  @doc """
+  Generalized Bell membership function.
+    * `c` - (number) Center.
+    * `s` - (number) Slope.
+    * `b` - (number) The width of the curve, it must not be equal to 0.
+
+  Definition of Generalized Bell function is:
+        y(x) = 1 / (1 + |((x - c) / b)|^(2 * s))
+  """
+  @spec gbell([...]) :: {fun(), any}
+  def gbell([c, s, b]) when b != 0 do
+    mu = fn x ->
+      ((x - c) / b)
+      |> abs()
+      |> pow(2 * s)
+      |> Kernel.+(1)
+      |> pow(-1)
+    end
+
+    {mu, c}
+  end
+
+  def gbell([_c, _s, b]), do: raise(ArgumentError, "Bad width of the curve: #{b}")
+
+  @doc """
+  Sigmoidal membership function.
+    * `c` - (number) Crossover point.
+    * `s` - (number) Slope.
+
+  Definition of Generalized Bell function is:
+        y(x) = 1 / (1 + e^(-s(x-c)))
+  """
+  @spec sigmoid([...]) :: {fun(), any}
+  def sigmoid([c, s, _]) do
+    mu = fn x ->
+      (-s * (x - c))
+      |> exp()
+      |> Kernel.+(1)
+      |> pow(-1)
+    end
+
+    {mu, c}
   end
 end
