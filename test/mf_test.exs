@@ -82,4 +82,43 @@ defmodule MfTest do
     assert mf.(80) |> round(3) == 1
     assert mf.(90) |> round(3) == 1
   end
+
+  test "Z-shaped mf" do
+    {mf, c} = MembershipFun.z_shaped([30, 70, nil])
+    assert c == 50
+    assert mf.(20) == 1
+    assert mf.(30) == 1
+    assert mf.(40) == 0.875
+    assert mf.(50) == 0.500
+    assert mf.(60) == 0.125
+    assert mf.(70) == 0
+    assert mf.(80) == 0
+    assert mf.(90) == 0
+  end
+
+  test "S-shaped mf" do
+    {mf, c} = MembershipFun.s_shaped([30, 70, nil])
+    assert c == 50
+    assert mf.(20) == 0
+    assert mf.(30) == 0
+    assert mf.(40) == 0.125
+    assert mf.(50) == 0.500
+    assert mf.(60) == 0.875
+    assert mf.(70) == 1
+    assert mf.(80) == 1
+    assert mf.(90) == 1
+  end
+
+  test "Pi-shaped mf" do
+    {mf, c} = MembershipFun.pi_shaped([30, 60, 70, 100])
+    assert c == 65
+    assert mf.(30) == 0
+    assert mf.(40) == 0.2222222222222222
+    assert mf.(50) == 0.7777777777777778
+    assert mf.(60) == 1
+    assert mf.(70) == 1
+    assert mf.(80) == 0.7777777777777778
+    assert mf.(90) == 0.2222222222222222
+    assert mf.(99) == 0.0022222222222222222
+  end
 end

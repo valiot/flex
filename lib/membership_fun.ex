@@ -174,4 +174,109 @@ defmodule Flex.MembershipFun do
 
     {mu, c}
   end
+
+  @doc """
+  Z-shaped membership function.
+  """
+  @spec z_shaped([...]) :: {fun(), any}
+  def z_shaped([a, b, _]) when a <= b do
+    c = (a + b) / 2
+
+    mu = fn x ->
+      cond do
+        x <= a ->
+          1
+
+        a <= x and x <= (a + b) / 2 ->
+          1 - 2 * pow((x-a)/(b-a), 2)
+
+        (a + b) / 2 <= x and x <= b ->
+          2 * pow((x-b)/(b-a), 2)
+
+        x >= b ->
+          0
+
+        # Catch all
+        true ->
+          0
+      end
+    end
+
+    {mu, c}
+  end
+
+  def z_shaped([_a, _b, _]), do: raise(ArgumentError, "a <= b is required.")
+
+  @doc """
+  S-shaped membership function.
+  """
+  @spec s_shaped([...]) :: {fun(), any}
+  def s_shaped([a, b, _]) when a <= b do
+    c = (a + b) / 2
+
+    mu = fn x ->
+      cond do
+        x <= a ->
+          0
+
+        a <= x and x <= (a + b) / 2 ->
+          2 * pow((x-a)/(b-a), 2)
+
+        (a + b) / 2 <= x and x <= b ->
+          1 - 2 * pow((x-b)/(b-a), 2)
+
+        x >= b ->
+          1
+
+        # Catch all
+        true ->
+          0
+      end
+    end
+
+    {mu, c}
+  end
+
+  def s_shaped([_a, _b, _]), do: raise(ArgumentError, "a <= b is required.")
+
+  @doc """
+  Pi-shaped membership function.
+  """
+  @spec pi_shaped([...]) :: {fun(), any}
+  def pi_shaped([a, b, c, d]) when a <= b and b <= c and c <= d do
+    center = (a + d) / 2
+
+    mu = fn x ->
+      cond do
+        x <= a ->
+          0
+
+        a <= x and x <= (a + b) / 2 ->
+          2 * pow((x-a)/(b-a), 2)
+
+        (a + b) / 2 <= x and x <= b ->
+          1 - 2 * pow((x-b)/(b-a), 2)
+
+        b <= x and x <= c ->
+          1
+
+        c <= x and x <= (c + d) / 2 ->
+          1 - 2 * pow((x-c)/(d-c), 2)
+
+        (c + d) / 2 <= x and x <= d ->
+          2 * pow((x-d)/(d-c), 2)
+
+        x >= d ->
+          0
+
+        # Catch all
+        true ->
+          0
+      end
+    end
+
+    {mu, center}
+  end
+
+  def pi_shaped([_a, _b, _]), do: raise(ArgumentError, "a <= b <= c <= d is required.")
 end
