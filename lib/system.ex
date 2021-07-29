@@ -7,15 +7,16 @@ defmodule Flex.System do
   use GenServer
   require Logger
 
-  alias Flex.Variable
-  import Flex.Rule
+  alias Flex.{Variable, EngineAdapter}
+  alias Flex.EngineAdapter.{Mamdani, TakagiSugeno}
 
   defmodule State do
     @moduledoc false
     defstruct rules: nil,
               antecedent: nil,
               consequent: nil,
-              lt_ant: nil
+              lt_ant: nil,
+              engine_type: Mamdani
   end
 
   @typedoc """
@@ -24,11 +25,13 @@ defmodule Flex.System do
   - `:antecedent` - (Map) Input variables.
   - `:consequent` - Output variable.
   - `:lt_ant` - a list of the input variables.
+  - `:engine_type` - defines the inference engine behavior (default: Mamdini).
   """
   @type t :: %Flex.System.State{
           rules: [Flex.Rule.t(), ...],
           antecedent: [Flex.Variable.t(), ...],
-          consequent: Flex.Variable.t()
+          consequent: Flex.Variable.t(),
+          engine_type: Mamdani | TakagiSugeno
         }
 
   @doc """
@@ -55,6 +58,14 @@ defmodule Flex.System do
     GenServer.call(pid, {:compute, input})
   end
 
+  @doc """
+  Sets the Inference Engine type.
+  """
+  @spec set_engine_type(atom | pid | {atom, any} | {:via, atom, any}, atom) :: any
+  def set_engine_type(pid, type) when type in [Mamdani, TakagiSugeno] do
+    GenServer.call(pid, {:set_engine_type, type})
+  end
+
   def init(params) do
     rule = Keyword.fetch!(params, :rules)
     lt_ant = Keyword.fetch!(params, :antecedent)
@@ -64,15 +75,19 @@ defmodule Flex.System do
     {:ok, state}
   end
 
-  def handle_call({:compute, input}, _from, state) do
+  def handle_call({:compute, input}, _from, %{engine_type: engine_type} = state) do
     output =
       input
+      |> EngineAdapter.validation(engine_type, state.lt_ant, state.rules, state.consequent)
       |> fuzzification(state.lt_ant, state.antecedent)
-      |> inference_engine(state.rules, state.consequent)
-      |> output_combination()
-      |> defuzzification()
+      |> EngineAdapter.inference(engine_type, state.rules, state.consequent)
+      |> EngineAdapter.defuzzification(engine_type)
 
     {:reply, output, state}
+  end
+
+  def handle_call({:set_engine_type, type}, _from, state) do
+    {:reply, :ok, %{state | engine_type: type}}
   end
 
   defp fuzzification([], [], ant_map), do: ant_map
@@ -82,63 +97,6 @@ defmodule Flex.System do
     ant_map = Map.put(ant_map, fz_var.tag, n_fz_var)
     fuzzification(i_tail, k_tail, ant_map)
   end
-
-  @doc false
-  def inference_engine(_antecedents, [], consequent), do: consequent
-
-  def inference_engine(antecedents, [rule | tail], consequent) do
-    rule_params = get_spec_antecedents(rule.antecedent, antecedents, []) ++ [consequent]
-
-    consequent =
-      if is_function(rule.statement) do
-        rule.statement.(rule_params)
-      else
-        args = Map.merge(antecedents, %{consequent.tag => consequent})
-        statement(rule.statement, args)
-      end
-
-    inference_engine(antecedents, tail, consequent)
-  end
-
-  defp get_spec_antecedents([], _antecedents, lt_ant_vars), do: lt_ant_vars
-
-  defp get_spec_antecedents([tag | tail], antecedents, lt_ant_vars) do
-    f_var = Map.get(antecedents, tag)
-    lt_ant_vars = lt_ant_vars ++ [f_var]
-    get_spec_antecedents(tail, antecedents, lt_ant_vars)
-  end
-
-  defp output_combination(cons_var) do
-    output = Enum.map(cons_var.fuzzy_sets, fn x -> root_sum_square(cons_var.mf_values[x.tag]) end)
-    %{cons_var | tmp: output}
-  end
-
-  defp root_sum_square(mf_value) do
-    mf_value
-    |> Enum.map(fn x -> x * x end)
-    |> Enum.sum()
-    |> :math.sqrt()
-  end
-
-  defp defuzzification(fuzzy_output), do: Variable.defuzzification(fuzzy_output)
-
-  defp statement({arg1, arg2, "&&&"}, args), do: statement(arg1, args) &&& statement(arg2, args)
-  defp statement({arg1, arg2, "|||"}, args), do: statement(arg1, args) ||| statement(arg2, args)
-
-  defp statement({var_tag, set_tag, "~>"}, args) when is_binary(var_tag) do
-    fuzzy_var = Map.get(args, var_tag, :error)
-    fuzzy_var ~> set_tag
-  end
-
-  defp statement({consequent, set_tag, "~>"}, args), do: statement(consequent, args) ~> set_tag
-
-  defp statement({arg1, con_tag, ">>>"}, args) do
-    val = statement(arg1, args)
-    consequent = Map.get(args, con_tag)
-    val >>> consequent
-  end
-
-  defp statement(arg, _args), do: arg
 
   defp fzlt_to_map([], map), do: map
 

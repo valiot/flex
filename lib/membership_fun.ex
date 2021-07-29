@@ -188,10 +188,10 @@ defmodule Flex.MembershipFun do
           1
 
         a <= x and x <= (a + b) / 2 ->
-          1 - 2 * pow((x-a)/(b-a), 2)
+          1 - 2 * pow((x - a) / (b - a), 2)
 
         (a + b) / 2 <= x and x <= b ->
-          2 * pow((x-b)/(b-a), 2)
+          2 * pow((x - b) / (b - a), 2)
 
         x >= b ->
           0
@@ -220,10 +220,10 @@ defmodule Flex.MembershipFun do
           0
 
         a <= x and x <= (a + b) / 2 ->
-          2 * pow((x-a)/(b-a), 2)
+          2 * pow((x - a) / (b - a), 2)
 
         (a + b) / 2 <= x and x <= b ->
-          1 - 2 * pow((x-b)/(b-a), 2)
+          1 - 2 * pow((x - b) / (b - a), 2)
 
         x >= b ->
           1
@@ -252,19 +252,19 @@ defmodule Flex.MembershipFun do
           0
 
         a <= x and x <= (a + b) / 2 ->
-          2 * pow((x-a)/(b-a), 2)
+          2 * pow((x - a) / (b - a), 2)
 
         (a + b) / 2 <= x and x <= b ->
-          1 - 2 * pow((x-b)/(b-a), 2)
+          1 - 2 * pow((x - b) / (b - a), 2)
 
         b <= x and x <= c ->
           1
 
         c <= x and x <= (c + d) / 2 ->
-          1 - 2 * pow((x-c)/(d-c), 2)
+          1 - 2 * pow((x - c) / (d - c), 2)
 
         (c + d) / 2 <= x and x <= d ->
-          2 * pow((x-d)/(d-c), 2)
+          2 * pow((x - d) / (d - c), 2)
 
         x >= d ->
           0
