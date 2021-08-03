@@ -14,6 +14,10 @@ defmodule Flex.EngineAdapter.Mamdani do
     do: input_vector
 
   @impl EngineAdapter
+  def fuzzification(input_vector, antecedent_name_list, antecedent_map),
+    do: EngineAdapter.default_fuzzification(input_vector, antecedent_name_list, antecedent_map)
+
+  @impl EngineAdapter
   def inference(fuzzy_antecedents, rules, consequent) do
     fuzzy_antecedents
     |> inference_engine(rules, consequent)

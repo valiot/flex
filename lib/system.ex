@@ -7,7 +7,7 @@ defmodule Flex.System do
   use GenServer
   require Logger
 
-  alias Flex.{Variable, EngineAdapter}
+  alias Flex.EngineAdapter
   alias Flex.EngineAdapter.{Mamdani, TakagiSugeno}
 
   defmodule State do
@@ -61,10 +61,12 @@ defmodule Flex.System do
   @doc """
   Sets the Inference Engine type.
   """
-  @spec set_engine_type(atom | pid | {atom, any} | {:via, atom, any}, atom) :: any
+  @spec set_engine_type(atom | pid | {atom, any} | {:via, atom, any}, atom) :: :ok | {:error, :einval}
   def set_engine_type(pid, type) when type in [Mamdani, TakagiSugeno] do
     GenServer.call(pid, {:set_engine_type, type})
   end
+
+  def set_engine_type(_pid, _type), do: {:error, :einval}
 
   def init(params) do
     rule = Keyword.fetch!(params, :rules)
@@ -79,7 +81,7 @@ defmodule Flex.System do
     output =
       input
       |> EngineAdapter.validation(engine_type, state.lt_ant, state.rules, state.consequent)
-      |> fuzzification(state.lt_ant, state.antecedent)
+      |> EngineAdapter.fuzzification(engine_type, state.lt_ant, state.antecedent)
       |> EngineAdapter.inference(engine_type, state.rules, state.consequent)
       |> EngineAdapter.defuzzification(engine_type)
 
@@ -88,14 +90,6 @@ defmodule Flex.System do
 
   def handle_call({:set_engine_type, type}, _from, state) do
     {:reply, :ok, %{state | engine_type: type}}
-  end
-
-  defp fuzzification([], [], ant_map), do: ant_map
-
-  defp fuzzification([input | i_tail], [fz_var | k_tail], ant_map) do
-    n_fz_var = Variable.fuzzification(fz_var, input)
-    ant_map = Map.put(ant_map, fz_var.tag, n_fz_var)
-    fuzzification(i_tail, k_tail, ant_map)
   end
 
   defp fzlt_to_map([], map), do: map
