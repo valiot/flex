@@ -121,4 +121,30 @@ defmodule MfTest do
     assert mf.(90) == 0.2222222222222222
     assert mf.(99) == 0.0022222222222222222
   end
+
+  test "Linear combination mf (for Takagi-Sugeno Inference system)" do
+    # With offset
+    {mf, c} = MembershipFun.linear_combination([1, 2, 3, 100])
+    assert c == nil
+    assert mf.([1, 2, 3]) == 114
+
+    # Without offset
+    {mf, c} = MembershipFun.linear_combination([1, 2, 3, 0])
+    assert c == nil
+    assert mf.([1, 2, 3]) == 14
+
+    # Offset only
+    {mf, c} = MembershipFun.linear_combination([0, 0, 0, 100])
+    assert c == nil
+    assert mf.([1, 2, 3]) == 100
+  end
+
+  test " Linear combination mf exceptions" do
+    {mf, c} = MembershipFun.linear_combination([1, 2, 2, 100])
+    assert c == nil
+    assert_raise ArgumentError, "Invalid input_vector data type: 30, it must be a list.", fn ->  mf.(30) end
+    desired_exceptions =
+      "Invalid size between the coefficients: [1, 2, 2, 100] and the input_vector: [1, 2] (length(input_vector) + 1 == length(coefficients))"
+    assert_raise ArgumentError, desired_exceptions, fn ->  mf.([1, 2]) end
+  end
 end

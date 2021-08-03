@@ -279,4 +279,48 @@ defmodule Flex.MembershipFun do
   end
 
   def pi_shaped([_a, _b, _]), do: raise(ArgumentError, "a <= b <= c <= d is required.")
+
+  @doc """
+  For Takagi-Sugeno-Kang fuzzy inference, uses this output membership functions that are either constant
+  or a linear function that will be combined with the input values.
+
+  Example (2 inputs 1 output):
+    z_i = a_i*x + b_i*y + c_i
+
+  where,
+    * `z_i` - is the i'th rule output.
+    * `x, y` - are the values of input 1 and input 2, respectively.
+    * `a_i, b_i, and c_i` - are constant coefficients of the i'th rule output.
+    For a zero-order Takagi-Sugeno system, z_i is a constant (a = b = 0).
+
+   ## Example (in Elixir)
+
+      iex> {z_i_mf, nil} = MembershipFun.linear_combination([a_i, b_i, c_i])
+      iex> z_i = z_i_mf.([x,y])
+  """
+  @spec linear_combination([...]) :: {fun(), nil}
+  def linear_combination(coefficients) do
+    mu = fn input_vector ->
+      cond do
+        # Invalid data type
+        not is_list(input_vector) ->
+          raise(ArgumentError, "Invalid input_vector data type: #{inspect(input_vector)}, it must be a list.")
+        # Valid input_vector and coefficients.
+        length(input_vector) + 1 == length(coefficients) ->
+          {coefficients, [constant]} = Enum.split(coefficients, -1)
+          linear_combination(input_vector, coefficients) + constant
+        # Catch all
+        true ->
+          raise(ArgumentError, "Invalid size between the coefficients: #{inspect(coefficients)} and the input_vector: #{inspect(input_vector)} (length(input_vector) + 1 == length(coefficients))")
+      end
+    end
+
+    {mu, nil}
+  end
+
+  defp linear_combination(input_vector, coefficients) do
+    input_vector
+    |> Enum.zip(coefficients)
+    |> Enum.reduce(0, fn {input, coefficient}, acc -> acc + (input * coefficient) end)
+  end
 end

@@ -54,6 +54,24 @@ defmodule Flex.Set do
         "trapezoidal" ->
           MembershipFun.trapezoidal(mf_params)
 
+        "gaussian" ->
+          MembershipFun.gaussian(mf_params)
+
+        "pi_shaped" ->
+          MembershipFun.pi_shaped(mf_params)
+
+        "s_shaped" ->
+          MembershipFun.s_shaped(mf_params)
+
+        "z_shaped" ->
+          MembershipFun.z_shaped(mf_params)
+
+        "sigmoid" ->
+          MembershipFun.sigmoid(mf_params)
+
+        "linear_combination" ->
+          MembershipFun.linear_combination(mf_params)
+
         _ ->
           raise("Membership function not supported")
       end
