@@ -7,7 +7,7 @@ defmodule Flex.EngineAdapter.Mamdani do
   alias Flex.{Variable, EngineAdapter, EngineAdapter.State}
   @behaviour EngineAdapter
 
-  import Flex.EngineAdapter, only: [statement: 2, get_rule_parameters: 3]
+  import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]
 
   @impl EngineAdapter
   def validation(engine_state, _antecedents, _rules, _consequent),

@@ -108,32 +108,4 @@ defmodule RuleTest do
     output = rule1.statement.([n_error, n_dt_error, output])
     assert output.mf_values["cool"] == [0]
   end
-
-  test "Inference engine", %{ant: [error, dt_error], cons: output} do
-    n_error = Variable.fuzzification(error, -1)
-    n_dt_error = Variable.fuzzification(dt_error, -2.5)
-
-    r1 = fn [at1, at2, con] ->
-      (at1 ~> "too hot" &&& at2 ~> "getting colder") >>> con ~> "cool"
-    end
-
-    r2 = fn [at1, at2, con] ->
-      (at1 ~> "too hot" &&& at2 ~> "no change") >>> con ~> "heat"
-    end
-
-    rule1 =
-      Rule.new(statement: r1, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
-
-    rule2 =
-      Rule.new(statement: r2, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
-
-    antecedents = %{
-      n_error.tag => n_error,
-      n_dt_error.tag => n_dt_error
-    }
-
-    output = Flex.EngineAdapter.Mamdani.inference_engine(antecedents, [rule1, rule2], output)
-    assert output.mf_values["cool"] == [0]
-    assert output.mf_values["heat"] == [0.5]
-  end
 end

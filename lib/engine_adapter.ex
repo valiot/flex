@@ -1,6 +1,4 @@
 defmodule Flex.EngineAdapter do
-  import Flex.Rule
-
   alias Flex.Variable
   alias Flex.EngineAdapter.{State, Mamdani, TakagiSugeno}
 
@@ -57,31 +55,5 @@ defmodule Flex.EngineAdapter do
     n_fz_var = Variable.fuzzification(fz_var, input)
     ant_map = Map.put(ant_map, fz_var.tag, n_fz_var)
     default_fuzzification(i_tail, k_tail, ant_map)
-  end
-
-  def statement({arg1, arg2, "&&&"}, args), do: statement(arg1, args) &&& statement(arg2, args)
-  def statement({arg1, arg2, "|||"}, args), do: statement(arg1, args) ||| statement(arg2, args)
-
-  def statement({var_tag, set_tag, "~>"}, args) when is_binary(var_tag) do
-    fuzzy_var = Map.get(args, var_tag, :error)
-    fuzzy_var ~> set_tag
-  end
-
-  def statement({consequent, set_tag, "~>"}, args), do: statement(consequent, args) ~> set_tag
-
-  def statement({arg1, con_tag, ">>>"}, args) do
-    val = statement(arg1, args)
-    consequent = Map.get(args, con_tag)
-    val >>> consequent
-  end
-
-  def statement(arg, _args), do: arg
-
-  def get_rule_parameters([], _antecedents, lt_ant_vars), do: lt_ant_vars
-
-  def get_rule_parameters([tag | tail], antecedents, lt_ant_vars) do
-    f_var = Map.get(antecedents, tag)
-    lt_ant_vars = lt_ant_vars ++ [f_var]
-    get_rule_parameters(tail, antecedents, lt_ant_vars)
   end
 end

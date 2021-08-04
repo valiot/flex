@@ -4,6 +4,35 @@ defmodule MamdaniTest do
   alias Flex.{Set, Variable, Rule, System, EngineAdapter.Mamdani}
   doctest Flex
 
+  setup do
+    t_h = Set.new(tag: "too hot", mf_type: "saturation", mf_params: [-2, 0, -4])
+    j_r = Set.new(tag: "just right", mf_type: "triangle", mf_params: [-2, 0, 2])
+    t_c = Set.new(tag: "too cold", mf_type: "shoulder", mf_params: [0, 2, 4])
+
+    fuzzy_sets = [t_h, j_r, t_c]
+    error = Variable.new(tag: "error", fuzzy_sets: fuzzy_sets, type: :antecedent, range: -4..4)
+
+    t_h = Set.new(tag: "getting hotter", mf_type: "saturation", mf_params: [-5, 0, -10])
+    j_r = Set.new(tag: "no change", mf_type: "triangle", mf_params: [-5, 0, 5])
+    t_c = Set.new(tag: "getting colder", mf_type: "shoulder", mf_params: [0, 5, 10])
+
+    fuzzy_sets = [t_h, j_r, t_c]
+
+    dt_error =
+      Variable.new(tag: "dt_error", fuzzy_sets: fuzzy_sets, type: :antecedent, range: -10..10)
+
+    t_h = Set.new(tag: "cool", mf_type: "saturation", mf_params: [-50, 0, -100])
+    j_r = Set.new(tag: "do nothing", mf_type: "triangle", mf_params: [-50, 0, 50])
+    t_c = Set.new(tag: "heat", mf_type: "shoulder", mf_params: [0, 50, 100])
+
+    fuzzy_sets = [t_h, j_r, t_c]
+
+    output =
+      Variable.new(tag: "output", fuzzy_sets: fuzzy_sets, type: :consequent, range: -100..100)
+
+    %{ant: [error, dt_error], cons: output}
+  end
+
   test "Mamdani System test" do
     nb = Set.new(tag: "nb", mf_type: "saturation", mf_params: [-5, -2.5, -5])
     ns = Set.new(tag: "ns", mf_type: "triangle", mf_params: [-5, -2.5, 0])
@@ -257,5 +286,33 @@ defmodule MamdaniTest do
     error = %{error | tmp: [0.866, 0.5, 0]}
     output = Mamdani.centroid_method(error)
     assert Float.floor(output, 1) == -63.4
+  end
+
+  test "Inference engine", %{ant: [error, dt_error], cons: output} do
+    n_error = Variable.fuzzification(error, -1)
+    n_dt_error = Variable.fuzzification(dt_error, -2.5)
+
+    r1 = fn [at1, at2, con] ->
+      (at1 ~> "too hot" &&& at2 ~> "getting colder") >>> con ~> "cool"
+    end
+
+    r2 = fn [at1, at2, con] ->
+      (at1 ~> "too hot" &&& at2 ~> "no change") >>> con ~> "heat"
+    end
+
+    rule1 =
+      Rule.new(statement: r1, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
+
+    rule2 =
+      Rule.new(statement: r2, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
+
+    antecedents = %{
+      n_error.tag => n_error,
+      n_dt_error.tag => n_dt_error
+    }
+
+    output = Mamdani.inference_engine(antecedents, [rule1, rule2], output)
+    assert output.mf_values["cool"] == [0]
+    assert output.mf_values["heat"] == [0.5]
   end
 end
