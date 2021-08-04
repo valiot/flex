@@ -100,9 +100,9 @@ defmodule RuleTest do
     end
 
     rule1 =
-      Rule.new(statement: r1, consequent: output.tag, antecedent: [n_error.tag, n_dt_error.tag])
+      Rule.new(statement: r1, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
 
-    assert rule1.antecedent == ["error", "dt_error"]
+    assert rule1.antecedents == ["error", "dt_error"]
     assert rule1.consequent == "output"
 
     output = rule1.statement.([n_error, n_dt_error, output])
@@ -122,10 +122,10 @@ defmodule RuleTest do
     end
 
     rule1 =
-      Rule.new(statement: r1, consequent: output.tag, antecedent: [n_error.tag, n_dt_error.tag])
+      Rule.new(statement: r1, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
 
     rule2 =
-      Rule.new(statement: r2, consequent: output.tag, antecedent: [n_error.tag, n_dt_error.tag])
+      Rule.new(statement: r2, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
 
     antecedents = %{
       n_error.tag => n_error,

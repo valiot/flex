@@ -43,10 +43,10 @@ defmodule TakagiSugenoTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
@@ -54,7 +54,7 @@ defmodule TakagiSugenoTest do
   end
 
   test "Setup for the fuzzy logic system", %{ant: ant, cons: output, rules: rules} do
-    {:ok, s_pid} = System.start_link(antecedent: ant, consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedents: ant, consequent: output, rules: rules)
     state = :sys.get_state(s_pid)
     assert is_map(state.antecedent)
     assert is_map(state.consequent)
@@ -62,10 +62,9 @@ defmodule TakagiSugenoTest do
   end
 
   test "Compute an output with an input vector", %{ant: ant, cons: output, rules: rules} do
-    {:ok, s_pid} = System.start_link(antecedent: ant, consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedents: ant, consequent: output, rules: rules)
     :ok = System.set_engine_type(s_pid, TakagiSugeno)
     output = System.compute(s_pid, [1.5, 2.5])
     assert Float.floor(output, 1) == 3.26
   end
-
 end

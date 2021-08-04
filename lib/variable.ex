@@ -64,20 +64,4 @@ defmodule Flex.Variable do
     acc = Map.put(acc, key, mu)
     map_all_mf(tail, input, acc)
   end
-
-  @doc """
-  Turns an consequent fuzzy variable (output) from a fuzzy value to a crisp value (centroid method).
-  """
-  @spec defuzzification(Flex.Variable.t()) :: float
-  def defuzzification(%Variable{type: type} = fuzzy_var) when type == :consequent do
-    fuzzy_to_crisp(fuzzy_var.fuzzy_sets, fuzzy_var.tmp, 0, 0)
-  end
-
-  defp fuzzy_to_crisp([], _input, nom, den), do: nom / den
-
-  defp fuzzy_to_crisp([fs | f_tail], [input | i_tail], nom, den) do
-    nom = nom + fs.mf_center * input
-    den = den + input
-    fuzzy_to_crisp(f_tail, i_tail, nom, den)
-  end
 end

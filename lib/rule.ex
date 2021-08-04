@@ -6,7 +6,7 @@ defmodule Flex.Rule do
   """
 
   defstruct statement: nil,
-            antecedent: nil,
+            antecedents: nil,
             consequent: nil
 
   @typedoc """
@@ -17,7 +17,7 @@ defmodule Flex.Rule do
   """
   @type t :: %__MODULE__{
           statement: fun() | tuple(),
-          antecedent: [Flex.Variable.t(), ...],
+          antecedents: [Flex.Variable.t(), ...],
           consequent: Flex.Variable.t()
         }
 
@@ -26,14 +26,14 @@ defmodule Flex.Rule do
 
   The following options are require:
     - `:statement` - Defines the rule behavior.
-    - `:antecedent` - (list) Defines the input variables.
+    - `:antecedents` - (list) Defines the input variables.
     - `:consequent` - Defines the output variable.
   """
   def new(params) do
     rule = Keyword.fetch!(params, :statement)
-    antecedent = Keyword.fetch!(params, :antecedent)
+    antecedents = Keyword.fetch!(params, :antecedents)
     consequent = Keyword.fetch!(params, :consequent)
-    %Rule{statement: rule, antecedent: antecedent, consequent: consequent}
+    %Rule{statement: rule, antecedents: antecedents, consequent: consequent}
   end
 
   @doc """

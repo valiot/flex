@@ -69,15 +69,15 @@ defmodule SystemTest do
       (at1 ~> "too cold" &&& at2 ~> "getting hotter") >>> con ~> "heat"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
 
@@ -85,21 +85,21 @@ defmodule SystemTest do
   end
 
   test "Setup for the fuzzy logic system", %{ant: ant, cons: output, rules: rules} do
-    {:ok, s_pid} = System.start_link(antecedent: ant, consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedents: ant, consequent: output, rules: rules)
     state = :sys.get_state(s_pid)
-    assert is_map(state.antecedent)
+    assert is_list(state.antecedents)
     assert is_map(state.consequent)
     assert is_list(state.rules)
   end
 
   test "Compute an output with an input vector", %{ant: ant, cons: output, rules: rules} do
-    {:ok, s_pid} = System.start_link(antecedent: ant, consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedents: ant, consequent: output, rules: rules)
     output = System.compute(s_pid, [-1, -2.5])
     assert Float.floor(output, 1) == -63.4
   end
 
   test "Change Engine Inference", %{ant: ant, cons: output, rules: rules} do
-    {:ok, s_pid} = System.start_link(antecedent: ant, consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedents: ant, consequent: output, rules: rules)
     assert System.set_engine_type(s_pid, TakagiSugeno) == :ok
     assert System.set_engine_type(s_pid, Mamdani) == :ok
     assert System.set_engine_type(s_pid, Another) == {:error, :einval}
@@ -142,19 +142,19 @@ defmodule SystemTest do
       {{{{"error", "too cold", "~>"}, {"dt_error", "getting hotter", "~>"}, "&&&"}, "output",
         ">>>"}, "cool", "~>"}
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
 
-    {:ok, s_pid} = System.start_link(antecedent: ant, consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedents: ant, consequent: output, rules: rules)
     output = System.compute(s_pid, [-1, -2.5])
     assert Float.floor(output, 1) == -63.4
   end

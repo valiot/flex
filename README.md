@@ -160,15 +160,15 @@ Currently there are two types of syntax for defining the rules `statement`:
     {{{{"error", "too cold", "~>"}, {"dt_error", "getting hotter", "~>"}, "&&&"}, "output",
       ">>>"}, "cool", "~>"}
 
-  rule1 = Flex.Rule.new(statement: r1, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule2 = Flex.Rule.new(statement: r2, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule3 = Flex.Rule.new(statement: r3, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule4 = Flex.Rule.new(statement: r4, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule5 = Flex.Rule.new(statement: r5, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule6 = Flex.Rule.new(statement: r6, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule7 = Flex.Rule.new(statement: r7, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule8 = Flex.Rule.new(statement: r8, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-  rule9 = Flex.Rule.new(statement: r9, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule1 = Flex.Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule2 = Flex.Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule3 = Flex.Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule4 = Flex.Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule5 = Flex.Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule6 = Flex.Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule7 = Flex.Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule8 = Flex.Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule9 = Flex.Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
   rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
 
@@ -182,7 +182,7 @@ Currently there are two types of syntax for defining the rules `statement`:
   - `:consequent` - Defines the output variable.
 
 ```elixir
-  {:ok, s_pid} = Flex.System.start_link(antecedent: [error, dt_error], consequent: output, rules: rules)
+  {:ok, s_pid} = Flex.System.start_link(antecedents: [error, dt_error], consequent: output, rules: rules)
 ```
 
 **Step 5:** Fit the FLS with a input vector using `Flex.System.compute/2`.

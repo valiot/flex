@@ -1,7 +1,7 @@
 defmodule MamdaniTest do
   use ExUnit.Case
   import Flex.Rule
-  alias Flex.{Set, Variable, Rule, System}
+  alias Flex.{Set, Variable, Rule, System, EngineAdapter.Mamdani}
   doctest Flex
 
   test "Mamdani System test" do
@@ -128,63 +128,63 @@ defmodule MamdaniTest do
       (at1 ~> "nb" &&& at2 ~> "ps") >>> con ~> "pb"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
-    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule10 =
-      Rule.new(statement: r10, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r10, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule11 =
-      Rule.new(statement: r11, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r11, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule12 =
-      Rule.new(statement: r12, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r12, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule13 =
-      Rule.new(statement: r13, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r13, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule14 =
-      Rule.new(statement: r14, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r14, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule15 =
-      Rule.new(statement: r15, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r15, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule16 =
-      Rule.new(statement: r16, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r16, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule17 =
-      Rule.new(statement: r17, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r17, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule18 =
-      Rule.new(statement: r18, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r18, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule19 =
-      Rule.new(statement: r19, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r19, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule20 =
-      Rule.new(statement: r20, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r20, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule21 =
-      Rule.new(statement: r21, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r21, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule22 =
-      Rule.new(statement: r22, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r22, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule23 =
-      Rule.new(statement: r23, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r23, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule24 =
-      Rule.new(statement: r24, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r24, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule25 =
-      Rule.new(statement: r25, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+      Rule.new(statement: r25, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rules = [
       rule1,
@@ -215,7 +215,7 @@ defmodule MamdaniTest do
     ]
 
     {:ok, s_pid} =
-      System.start_link(antecedent: [error, dt_error], consequent: output, rules: rules)
+      System.start_link(antecedents: [error, dt_error], consequent: output, rules: rules)
 
     assert System.compute(s_pid, [-15, -0.5]) == 0.5
     assert System.compute(s_pid, [-15, -0.25]) == 0.5
@@ -242,5 +242,20 @@ defmodule MamdaniTest do
     assert System.compute(s_pid, [15, 0]) == -0.25
     assert System.compute(s_pid, [15, 0.25]) == -0.5
     assert System.compute(s_pid, [15, 0.5]) == -0.5
+  end
+
+  test "defuzzification test" do
+    t_h = Set.new(tag: "too hot", mf_type: "saturation", mf_params: [-50, 0, -100])
+    j_r = Set.new(tag: "just right", mf_type: "triangle", mf_params: [-50, 0, 50])
+    t_c = Set.new(tag: "too cold", mf_type: "shoulder", mf_params: [0, 50, 100])
+
+    fuzzy_sets = [t_h, j_r, t_c]
+
+    error =
+      Variable.new(tag: "error", fuzzy_sets: fuzzy_sets, type: :consequent, range: -100..100)
+
+    error = %{error | tmp: [0.866, 0.5, 0]}
+    output = Mamdani.centroid_method(error)
+    assert Float.floor(output, 1) == -63.4
   end
 end
