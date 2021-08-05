@@ -157,15 +157,32 @@ defmodule MamdaniTest do
       (at1 ~> "nb" &&& at2 ~> "ps") >>> con ~> "pb"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule1 =
+      Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule2 =
+      Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule3 =
+      Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule4 =
+      Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule5 =
+      Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule6 =
+      Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule7 =
+      Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule8 =
+      Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule9 =
+      Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rule10 =
       Rule.new(statement: r10, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
@@ -314,5 +331,50 @@ defmodule MamdaniTest do
     output = Mamdani.inference_engine(antecedents, [rule1, rule2], output)
     assert output.mf_values["cool"] == [0]
     assert output.mf_values["heat"] == [0.5]
+  end
+
+  test "SISO Controller" do
+    # Fuzzy Variables + Fuzzy Sets
+
+    # Input
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-5, -3, -7])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-4, -2.375, -0.75])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-1, 0, 1])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.75, 2.375, 4])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [3, 5, 7])
+
+    fuzzy_sets = [nb, ns, ze, ps, pb]
+    input = Variable.new(tag: "input", fuzzy_sets: fuzzy_sets, type: :antecedent, range: [-7, 7])
+
+    # Output
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-750, -500, -1000])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-625, -375, -125])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-187.5, 0, 187.5])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [125, 375, 625])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [500, 750, 1000])
+
+    fuzzy_sets = [nb, ns, ze, ps, pb]
+
+    output =
+      Variable.new(tag: "output", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-1000, 1000])
+
+    # Rules
+    r1 = fn [at1, con] -> at1 ~> "mb" >>> con ~> "mb" end
+    r2 = fn [at1, con] -> at1 ~> "ms" >>> con ~> "mb" end
+    r3 = fn [at1, con] -> at1 ~> "ze" >>> con ~> "mb" end
+    r4 = fn [at1, con] -> at1 ~> "ps" >>> con ~> "ms" end
+    r5 = fn [at1, con] -> at1 ~> "pb" >>> con ~> "ms" end
+
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [input.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [input.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [input.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [input.tag])
+    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [input.tag])
+
+    rules = [rule1, rule2, rule3, rule4, rule5]
+
+    {:ok, s_pid} = System.start_link(antecedents: [input], consequent: output, rules: rules)
+
+    assert System.compute(s_pid, [4.1]) == -375.0
   end
 end

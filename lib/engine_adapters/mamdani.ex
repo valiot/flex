@@ -25,6 +25,7 @@ defmodule Flex.EngineAdapter.Mamdani do
       fuzzy_antecedents
       |> inference_engine(rules, consequent)
       |> output_combination()
+
     %{engine_state | fuzzy_consequent: fuzzy_consequent}
   end
 
@@ -53,6 +54,8 @@ defmodule Flex.EngineAdapter.Mamdani do
     output = Enum.map(cons_var.fuzzy_sets, fn x -> root_sum_square(cons_var.mf_values[x.tag]) end)
     %{cons_var | tmp: output}
   end
+
+  defp root_sum_square(nil), do: 0.0
 
   defp root_sum_square(mf_value) do
     mf_value
