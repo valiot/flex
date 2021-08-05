@@ -398,5 +398,6 @@ defmodule MandaniBTest do
 
     IO.puts("Hello World")
     # #{inspect({[residual_error]})} => #{inspect({srm_res_output})}
+    
   end
 end
