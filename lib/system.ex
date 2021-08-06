@@ -113,6 +113,8 @@ defmodule Flex.System do
     %{cons_var | tmp: output}
   end
 
+  defp root_sum_square(nil), do: 0.0
+
   defp root_sum_square(mf_value) do
     mf_value
     |> Enum.map(fn x -> x * x end)
