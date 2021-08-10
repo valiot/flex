@@ -21,9 +21,9 @@ defmodule MandaniBTest do
 
     # Density Error
     nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-0.15, -0.1, -0.22])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-0.125, -0.05, 0.03])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-0.05, 0, 0.05])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.03, 0.05, 0.125])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-0.125, -0.075, -0.001])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-0.002, 0, 0.002])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.001, 0.075, 0.125])
     pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [0.1, 0.15, 0.22])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
@@ -32,9 +32,9 @@ defmodule MandaniBTest do
 
     # Viscosity Error
     nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-30, -20, -40])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-25, -14.25, -3.5])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-5, 0, 5])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [3.5, 14.25, 25])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-25, -13, -1])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-2, 0, 2])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [1, 13, 25])
     pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [20, 30, 40])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
@@ -44,44 +44,44 @@ defmodule MandaniBTest do
 
     # Outputs
     # Raw Material Flow Rate: Residual Error
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-750, -500, -1000])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-625, -375, -125])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-187.5, 0, 187.5])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [125, 375, 625])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [500, 750, 1000])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-448, -196, -700])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-245, -161, -28])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-35, 0, 35])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [28, 161, 245])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [196, 448, 700])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
     raw_material_flow_rate_delta_res =
       Variable.new(tag: "raw_material_flow_rate_delta_res", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-3000, 3000])
 
     # Raw Material Flow Rate: Viscosity Error
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-750, -500, -1000])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-625, -375, -125])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-187.5, 0, 187.5])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [125, 375, 625])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [500, 750, 1000])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-192, -84, -300])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-105, -69, -12])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-15, 0, 15])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [12, 69, 105])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [84, 192, 300])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
     raw_material_flow_rate_delta_vis =
       Variable.new(tag: "raw_material_flow_rate_delta_vis", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-3000, 3000])
 
     # Water Flow Rate: Density Error
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-555.5, -370, -740])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-462.5, -277.5, -92.5])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-185, 0, 185])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [92.5, 277.5, 462.5])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [370, 555.5, 740])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-420, -140, -700])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-175, -70, -7])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-10, 0, 10])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [7, 70, 175])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [140, 420, 700])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
     water_flow_rate_delta_dens =
       Variable.new(tag: "water_flow_rate_delta_dens", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-2000, 2000])
 
     # Water Flow Rate: Viscosity Error
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-555.5, -370, -740])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-462.5, -277.5, -92.5])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-185, 0, 185])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [92.5, 277.5, 462.5])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [370, 555.5, 740])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-180, -116, -300])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-75, -30, -3])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-5, 0, 5])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [3, 30, 75])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [116, 180, 300])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
     water_flow_rate_delta_vis =
@@ -161,29 +161,32 @@ defmodule MandaniBTest do
     {:ok, sw_vis_pid} =
       System.start_link(antecedent: [viscosity_error], consequent: water_flow_rate_delta_vis, rules: rules)
 
-      
+
     # Output Tests
 
     # Generate Random Numbers
-    # density_error_mb = fn -> random_between(-0.22, -0.1) end
-    # density_error_ms = fn -> random_between(-0.125, -0.03) end
-    # density_error_ze = fn -> random_between(-0.05, 0.05) end
-    # density_error_ps = fn -> random_between(0.03, 0.125) end
-    # density_error_pb = fn -> random_between(0.1, 0.22) end
-    #
-    # viscosity_error_mb = fn -> random_between(-40, -20) end
-    # viscosity_error_ms = fn -> random_between(-25, -3.5) end
-    # viscosity_error_ze = fn -> random_between(-5, 5) end
-    # viscosity_error_ps = fn -> random_between(3.5, 25) end
-    # viscosity_error_pb = fn -> random_between(20, 40) end
-    #
-    # residual_error_mb = fn -> random_between(-7, -3) end
-    # residual_error_ms = fn -> random_between(-4, -0.5) end
-    # residual_error_ze = fn -> random_between(-1, 1) end
-    # residual_error_ps = fn -> random_between(0.5, 4) end
-    # residual_error_pb = fn -> random_between(3, 7) end
+    density_error_mb = fn -> random_between(-0.22, -0.1) end
+    density_error_ms = fn -> random_between(-0.125, -0.001) end
+    density_error_ze = fn -> random_between(-0.002, 0.002) end
+    density_error_ps = fn -> random_between(0.001, 0.125) end
+    density_error_pb = fn -> random_between(0.1, 0.22) end
+
+    viscosity_error_mb = fn -> random_between(-40, -20) end
+    viscosity_error_ms = fn -> random_between(-25, -1) end
+    viscosity_error_ze = fn -> random_between(-2, 2) end
+    viscosity_error_ps = fn -> random_between(1, 25) end
+    viscosity_error_pb = fn -> random_between(20, 40) end
+
+    residual_error_mb = fn -> random_between(-7, -3) end
+    residual_error_ms = fn -> random_between(-4, -0.75) end
+    residual_error_ze = fn -> random_between(-1, 1) end
+    residual_error_ps = fn -> random_between(0.75, 4) end
+    residual_error_pb = fn -> random_between(3, 7) end
 
     # Compute with interview 3 data
+    IO.puts("Interview 3 (Controller B):\n")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [0, 0, 0])
     compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [2.14, 0.11, 11.42])
     compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [2.14, 0.11, 11.42])
     compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [0.35, 0.02, 13.28])
@@ -219,20 +222,228 @@ defmodule MandaniBTest do
     compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [-2.51, 0.05, -9.61])
     compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [-2.04, -0.04, -10.6])
     compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [-2.53, -0.04, -18.9])
+
+    IO.puts("\nComplete output test:\n")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_mb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_mb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_mb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_mb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_mb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ms.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ms.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ms.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ms.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ms.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ze.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ze.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ze.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ze.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ze.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ps.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ps.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ps.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ps.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_ps.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_pb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_pb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_pb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_pb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_mb.(), density_error_pb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+    IO.puts(" ")
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_mb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_mb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_mb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_mb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_mb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ms.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ms.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ms.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ms.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ms.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ze.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ze.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ze.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ze.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ze.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ps.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ps.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ps.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ps.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_ps.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_pb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_pb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_pb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_pb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ms.(), density_error_pb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+    IO.puts(" ")
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_mb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_mb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_mb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_mb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_mb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ms.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ms.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ms.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ms.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ms.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ze.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ze.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ze.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ze.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ze.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ps.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ps.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ps.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ps.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_ps.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_pb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_pb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_pb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_pb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ze.(), density_error_pb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+    IO.puts(" ")
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_mb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_mb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_mb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_mb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_mb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ms.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ms.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ms.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ms.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ms.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ze.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ze.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ze.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ze.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ze.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ps.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ps.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ps.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ps.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_ps.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_pb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_pb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_pb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_pb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_ps.(), density_error_pb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+    IO.puts(" ")
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_mb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_mb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_mb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_mb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_mb.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ms.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ms.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ms.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ms.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ms.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ze.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ze.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ze.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ze.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ze.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ps.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ps.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ps.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ps.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_ps.(), viscosity_error_pb.()])
+
+    IO.puts(" ")
+
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_pb.(), viscosity_error_mb.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_pb.(), viscosity_error_ms.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_pb.(), viscosity_error_ze.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_pb.(), viscosity_error_ps.()])
+    compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid}, [residual_error_pb.(), density_error_pb.(), viscosity_error_pb.()])
   end
 
   # Function for random number generator
-  # defp random_between(min, max), do: (min + ((max - min) * :rand.uniform())) |> Float.round(3)
+  defp random_between(min, max), do: (min + ((max - min) * :rand.uniform())) |> Float.round(3)
 
   # Function for computing fuzzy logic controller output
   defp compute({srm_res_pid, srm_vis_pid, sw_dens_pid, sw_vis_pid},[residual_error, density_error, viscosity_error]) do
     # TEST: System.compute(srm_res_pid, [residual_error])
-    srm_res_output = System.compute(srm_res_pid, [residual_error])
-    srm_vis_output = System.compute(srm_vis_pid, [viscosity_error])
-    sw_dens_output = System.compute(sw_dens_pid, [density_error])
-    sw_vis_output = System.compute(sw_vis_pid, [viscosity_error])
+    srm_res_output = System.compute(srm_res_pid, [residual_error]) |> Float.round(3)
+    srm_vis_output = System.compute(srm_vis_pid, [viscosity_error]) |> Float.round(3)
+    sw_dens_output = System.compute(sw_dens_pid, [density_error]) |> Float.round(3)
+    sw_vis_output = System.compute(sw_vis_pid, [viscosity_error]) |> Float.round(3)
 
     # TEST: #IO.puts({inspect({[residual_error]})} => #{inspect({srm_res_output})})
-    IO.puts("#{inspect({[residual_error, viscosity_error, density_error]})} => #{inspect({srm_res_output, srm_vis_output, sw_dens_output, sw_vis_output})}")
+    IO.puts("#{inspect({[residual_error, viscosity_error, density_error]})}\t => \t#{inspect({srm_res_output, srm_vis_output, sw_dens_output, sw_vis_output})}\t => \t#{inspect({srm_res_output + srm_vis_output, sw_dens_output + sw_vis_output})}")
   end
 end

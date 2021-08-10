@@ -19,7 +19,7 @@ defmodule Mamdani2Test do
       Variable.new(tag: "residual_error", fuzzy_sets: fuzzy_sets, type: :antecedent, range: [-7, 7])
 
     nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-0.15, -0.1, -0.22])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-0.125, -0.075, 0.001])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-0.125, -0.075, -0.001])
     ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-0.002, 0, 0.002])
     ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.001, 0.075, 0.125])
     pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [0.1, 0.15, 0.22])
