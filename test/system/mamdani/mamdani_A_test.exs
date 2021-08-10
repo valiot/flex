@@ -38,22 +38,22 @@ defmodule Mamdani2Test do
     viscosity_error =
       Variable.new(tag: "viscosity_error", fuzzy_sets: fuzzy_sets, type: :antecedent, range: -40..40)
 
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-640, -280, -1000])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-350, -230, -40])
-    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-50, 0, 50])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [40, 230, 350])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [280, 640, 1000])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -200, -1000])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-250, -120, -20])
+    ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-30, 0, 30])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [20, 125, 250])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [200, 600, 1000])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
 
     raw_material_flow_rate_delta =
       Variable.new(tag: "raw_material_flow_rate_delta", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-1000, 1000])
 
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -200, -1000])
-    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-250, -100, -10])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -150, -1000])
+    ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-250, -70, -10])
     ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-15, 0, 15])
-    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [10, 100, 250])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [200, 600, 1000])
+    ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [10, 70, 250])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [150, 600, 1000])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
     water_flow_rate_delta =
@@ -463,41 +463,41 @@ defmodule Mamdani2Test do
 
     IO.puts("Interview 3:\n")
 
-    compute({srm_pid, sw_pid}, [1.44, 0.11, 11.11])
-    compute({srm_pid, sw_pid}, [2.14, 0.11, 11.42])
-    compute({srm_pid, sw_pid}, [0.35, 0.02, 13.28])
-    compute({srm_pid, sw_pid}, [-0.31, -0.04, 11.52])
-    compute({srm_pid, sw_pid}, [-1.46, -0.03, 13.14])
+    compute({srm_pid, sw_pid}, [1.44, 0.11, 11.11], 19500, 9994)
+    compute({srm_pid, sw_pid}, [2.14, 0.11, 11.42], 19500, 9994)
+    compute({srm_pid, sw_pid}, [0.35, 0.02, 13.28], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-0.31, -0.04, 11.52], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-1.46, -0.03, 13.14], 19500, 9994)
 
-    compute({srm_pid, sw_pid}, [2.58, 0.06, 11.88])
-    compute({srm_pid, sw_pid}, [-2.06, 0.13, 12.54])
-    compute({srm_pid, sw_pid}, [-2.98, 0.02, 12.1])
-    compute({srm_pid, sw_pid}, [-2.07, -0.03, 11.44])
-    compute({srm_pid, sw_pid}, [-2.91, -0.07, 11.51])
+    compute({srm_pid, sw_pid}, [2.58, 0.06, 11.88], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.06, 0.13, 12.54], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.98, 0.02, 12.1], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.07, -0.03, 11.44], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.91, -0.07, 11.51], 19500, 9994)
 
-    compute({srm_pid, sw_pid}, [-2, 0.1, 11.49])
-    compute({srm_pid, sw_pid}, [1.11, 0.1, 13.67])
-    compute({srm_pid, sw_pid}, [1.2, 0.03, -20.43])
-    compute({srm_pid, sw_pid}, [0.75, -0.05, -1.75])
-    compute({srm_pid, sw_pid}, [1.1, -0.07, 7.19])
+    compute({srm_pid, sw_pid}, [-2, 0.1, 11.49], 19500, 9994)
+    compute({srm_pid, sw_pid}, [1.11, 0.1, 13.67], 19500, 9994)
+    compute({srm_pid, sw_pid}, [1.2, 0.03, -20.43], 19500, 9994)
+    compute({srm_pid, sw_pid}, [0.75, -0.05, -1.75], 19500, 9994)
+    compute({srm_pid, sw_pid}, [1.1, -0.07, 7.19], 19500, 9994)
 
-    compute({srm_pid, sw_pid}, [-0.6, 0.11, -23.05])
-    compute({srm_pid, sw_pid}, [-2.83, 0.05, 2.67])
-    compute({srm_pid, sw_pid}, [-2.95, 0.04, -19.92])
-    compute({srm_pid, sw_pid}, [-2.29, -0.05, -9.14])
-    compute({srm_pid, sw_pid}, [-2.73, -0.04, 7.73])
+    compute({srm_pid, sw_pid}, [-0.6, 0.11, -23.05], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.83, 0.05, 2.67], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.95, 0.04, -19.92], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.29, -0.05, -9.14], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.73, -0.04, 7.73], 19500, 9994)
 
-    compute({srm_pid, sw_pid}, [3.23, 0.13, -8.24])
-    compute({srm_pid, sw_pid}, [3.77, 0.11, -1.58])
-    compute({srm_pid, sw_pid}, [-1.44, 0.01, -14.64])
-    compute({srm_pid, sw_pid}, [-1.39, -0.04, -17.49])
-    compute({srm_pid, sw_pid}, [-0.29, -0.06, -18.53])
+    compute({srm_pid, sw_pid}, [3.23, 0.13, -8.24], 19500, 9994)
+    compute({srm_pid, sw_pid}, [3.77, 0.11, -1.58], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-1.44, 0.01, -14.64], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-1.39, -0.04, -17.49], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-0.29, -0.06, -18.53], 19500, 9994)
 
-    compute({srm_pid, sw_pid}, [2.19, 0.06, 1.73])
-    compute({srm_pid, sw_pid}, [-2.57, 0.09, 6.78])
-    compute({srm_pid, sw_pid}, [-2.51, 0.05, -9.61])
-    compute({srm_pid, sw_pid}, [-2.04, -0.04, -10.6])
-    compute({srm_pid, sw_pid}, [-2.53, -0.04, -18.9])
+    compute({srm_pid, sw_pid}, [2.19, 0.06, 1.73], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.57, 0.09, 6.78], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.51, 0.05, -9.61], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.04, -0.04, -10.6], 19500, 9994)
+    compute({srm_pid, sw_pid}, [-2.53, -0.04, -18.9], 19500, 9994)
 
     IO.puts("\nComplete output test:\n")
 
@@ -710,10 +710,11 @@ defmodule Mamdani2Test do
 
   defp random_between(min, max), do: (min + ((max - min) * :rand.uniform())) |> Float.round(3)
 
-  defp compute({srm_pid, sw_pid}, [residual_error, density_error, viscosity_error]) do
+  defp compute({srm_pid, sw_pid}, [residual_error, density_error, viscosity_error], offset_rm \\ 0, offset_w \\ 0) do
     srm_output = System.compute(srm_pid, [residual_error, viscosity_error])
     sw_output = System.compute(sw_pid, [density_error, viscosity_error])
 
-    IO.puts("#{inspect({[residual_error, viscosity_error], [density_error, viscosity_error]})} => #{inspect({srm_output, sw_output})}")
+    #IO.puts("#{inspect({[residual_error, viscosity_error], [density_error, viscosity_error]})} => #{inspect({srm_output + offset_rm, sw_output + offset_w})}")
+    IO.puts("#{inspect({round(srm_output + offset_rm), round(sw_output + offset_w)})}")
   end
 end
