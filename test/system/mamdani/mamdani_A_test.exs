@@ -1,4 +1,4 @@
-defmodule Mamdani2Test do
+defmodule MamdaniATest do
   use ExUnit.Case
   import Flex.Rule
   alias Flex.{Set, Variable, Rule, System}
