@@ -9,10 +9,10 @@ defmodule MamdaniCTest do
 
         # Inputs
         # Residual Error
-        nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-5, -3, -7])
-        ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-4, -2.375, -0.75])
-        ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-1, 0, 1])
-        ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.75, 2.375, 4])
+        nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-7, -5, -3])
+        ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-4, -2, -1])
+        ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-2, 0, 2])
+        ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [1, 2, 4])
         pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [3, 5, 7])
 
         fuzzy_sets = [nb, ns, ze, ps, pb]
@@ -21,9 +21,9 @@ defmodule MamdaniCTest do
 
         # Density Error
         nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-0.15, -0.1, -0.22])
-        ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-0.125, -0.05, 0.03])
-        ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-0.05, 0, 0.05])
-        ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.03, 0.05, 0.125])
+        ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-0.2, -0.05, 0.001])
+        ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-0.02, 0, 0.02])
+        ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [0.001, 0.05, 0.2])
         pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [0.1, 0.15, 0.22])
 
         fuzzy_sets = [nb, ns, ze, ps, pb]
@@ -78,16 +78,16 @@ defmodule MamdaniCTest do
             Variable.new(tag: "water_flow_rate_delta", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-2000, 2000])
 
         # Raw Material Flow Rate
-        nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-1500, -1000, -2000])
-        ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-1250, -750, -250])
-        ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-375, 0, 375])
-        ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [250, 750, 1250])
-        pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [1000, 1500, 2000])
+        nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-500, -330, -200])
+        ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-300, -150, -40])
+        ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-50, 0, 50])
+        ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [40, 150, 300])
+        pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [200, 330, 500])
 
         fuzzy_sets = [nb, ns, ze, ps, pb]
 
         raw_material_flow_rate_delta =
-        Variable.new(tag: "raw_material_flow_rate_delta", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-3000, 3000])
+        Variable.new(tag: "raw_material_flow_rate_delta", fuzzy_sets: fuzzy_sets, type: :consequent, range: [-1000, 1000])
 
 
         # DUAL INPUT CONTROLLERS
@@ -97,21 +97,21 @@ defmodule MamdaniCTest do
         r3 = fn [at1, at2, con] -> (at1 ~> "mb" &&& at2 ~> "ze") >>> con ~> "mb" end
         r4 = fn [at1, at2, con] -> (at1 ~> "mb" &&& at2 ~> "ps") >>> con ~> "ms" end
         r5 = fn [at1, at2, con] -> (at1 ~> "mb" &&& at2 ~> "pb") >>> con ~> "ms" end
-        r6 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "mb") >>> con ~> "mb" end
+        r6 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "mb") >>> con ~> "ms" end
         r7 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ms") >>> con ~> "ms" end
         r8 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ze") >>> con ~> "ms" end
-        r9 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ps") >>> con ~> "ze" end
-        r10 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "pb") >>> con ~> "ms" end
-        r11 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "mb") >>> con ~> "ms" end
+        r9 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ps") >>> con ~> "ms" end
+        r10 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "pb") >>> con ~> "ze" end
+        r11 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "mb") >>> con ~> "ze" end
         r12 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ms") >>> con ~> "ze" end
-        r13 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ze") >>> con ~> "ze" end
-        r14 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ps") >>> con ~> "ze" end
+        r13 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ze") >>> con ~> "ps" end
+        r14 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ps") >>> con ~> "ps" end
         r15 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "pb") >>> con ~> "ps" end
         r16 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "mb") >>> con ~> "ps" end
-        r17 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ms") >>> con ~> "ze" end
+        r17 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ms") >>> con ~> "ps" end
         r18 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ze") >>> con ~> "ps" end
         r19 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ps") >>> con ~> "ps" end
-        r20 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "pb") >>> con ~> "pb" end
+        r20 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "pb") >>> con ~> "ps" end
         r21 = fn [at1, at2, con] -> (at1 ~> "pb" &&& at2 ~> "mb") >>> con ~> "ps" end
         r22 = fn [at1, at2, con] -> (at1 ~> "pb" &&& at2 ~> "ms") >>> con ~> "ps" end
         r23 = fn [at1, at2, con] -> (at1 ~> "pb" &&& at2 ~> "ze") >>> con ~> "pb" end
@@ -233,21 +233,21 @@ defmodule MamdaniCTest do
         r3 = fn [at1, at2, con] -> (at1 ~> "mb" &&& at2 ~> "ze") >>> con ~> "pb" end
         r4 = fn [at1, at2, con] -> (at1 ~> "mb" &&& at2 ~> "ps") >>> con ~> "ps" end
         r5 = fn [at1, at2, con] -> (at1 ~> "mb" &&& at2 ~> "pb") >>> con ~> "ps" end
-        r6 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "mb") >>> con ~> "pb" end
+        r6 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "mb") >>> con ~> "ps" end
         r7 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ms") >>> con ~> "ps" end
-        r8 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ze") >>> con ~> "ze" end
-        r9 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ps") >>> con ~> "ms" end
+        r8 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ze") >>> con ~> "ps" end
+        r9 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "ps") >>> con ~> "ps" end
         r10 = fn [at1, at2, con] -> (at1 ~> "ms" &&& at2 ~> "pb") >>> con ~> "ps" end
         r11 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "mb") >>> con ~> "ps" end
         r12 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ms") >>> con ~> "ps" end
         r13 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ze") >>> con ~> "ze" end
-        r14 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ps") >>> con ~> "ms" end
+        r14 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "ps") >>> con ~> "ze" end
         r15 = fn [at1, at2, con] -> (at1 ~> "ze" &&& at2 ~> "pb") >>> con ~> "ms" end
         r16 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "mb") >>> con ~> "ms" end
-        r17 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ms") >>> con ~> "ps" end
-        r18 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ze") >>> con ~> "ze" end
+        r17 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ms") >>> con ~> "ms" end
+        r18 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ze") >>> con ~> "ms" end
         r19 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "ps") >>> con ~> "ms" end
-        r20 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "pb") >>> con ~> "mb" end
+        r20 = fn [at1, at2, con] -> (at1 ~> "ps" &&& at2 ~> "pb") >>> con ~> "ms" end
         r21 = fn [at1, at2, con] -> (at1 ~> "pb" &&& at2 ~> "mb") >>> con ~> "ms" end
         r22 = fn [at1, at2, con] -> (at1 ~> "pb" &&& at2 ~> "ms") >>> con ~> "ms" end
         r23 = fn [at1, at2, con] -> (at1 ~> "pb" &&& at2 ~> "ze") >>> con ~> "mb" end
@@ -364,19 +364,57 @@ defmodule MamdaniCTest do
         # OUTPUT TEST
 
         # Test compute data
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [2.14, 0.11, 11.42])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [2.14, 0.11, 11.42])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [0.35, 0.02, 13.28])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-0.31, -0.04, 11.52])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-1.46, -0.03, 13.14])
+
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [2.58, 0.06, 11.88])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.06, 0.13, 12.54])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.98, 0.02, 12.1])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.07, -0.03, 11.44])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.91, -0.07, 11.51])
+
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2, 0.1, 11.49])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [1.11, 0.1, 13.67])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [1.2, 0.03, -20.43])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [0.75, -0.05, -1.75])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [1.1, -0.07, 7.19])
+
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-0.6, 0.11, -23.05])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.83, 0.05, 2.67])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.95, 0.04, -19.92])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.29, -0.05, -9.14])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.73, -0.04, 7.73])
+
         compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [3.23, 0.13, -8.24])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [3.77, 0.11, -1.58])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-1.44, 0.01, -14.64])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-1.39, -0.04, -17.49])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-0.29, -0.06, -18.53])
+
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [2.19, 0.06, 1.73])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.57, 0.09, 6.78])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.51, 0.05, -9.61])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.04, -0.04, -10.6])
+        compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid}, [-2.53, -0.04, -18.9])
     end
 
     defp compute({srm_pid, sw_pid, srm_wd_res_pid, srm_wd_vis_pid, sw_rmd_dens_pid, sw_rmd_vis_pid},[residual_error, density_error, viscosity_error]) do
         srm_output = System.compute(srm_pid, [residual_error, viscosity_error])
         sw_output = System.compute(sw_pid, [density_error, viscosity_error])
 
-        srm_wd_res_out = System.compute(srm_wd_res_pid, [residual_error, sw_output])
-        srm_wd_vis_out = System.compute(srm_wd_vis_pid, [sw_output, viscosity_error])
-        sw_rmd_dens_out = System.compute(sw_rmd_dens_pid, [density_error, srm_output])
-        sw_rmd_vis_out = System.compute(sw_rmd_vis_pid, [srm_output, viscosity_error])
+        srm_wd_res_out = System.compute(srm_wd_res_pid, [residual_error, sw_output+9990])
+        srm_wd_vis_out = System.compute(srm_wd_vis_pid, [sw_output+9990, viscosity_error])
+        sw_rmd_dens_out = System.compute(sw_rmd_dens_pid, [density_error, srm_output+19000])
+        sw_rmd_vis_out = System.compute(sw_rmd_vis_pid, [srm_output+19000, viscosity_error])
 
-        IO.puts("#{inspect({[residual_error, viscosity_error], [density_error, viscosity_error]})} => #{inspect({srm_output, sw_output, srm_wd_res_out, srm_wd_vis_out, sw_rmd_dens_out, sw_rmd_vis_out})}")
+        out_val_srm = (srm_wd_res_out + srm_wd_vis_out)*0.50 + 19400
+        out_val_wd = (sw_rmd_dens_out + sw_rmd_vis_out)*0.90 + 9990
+
+        # IO.puts("#{inspect({[residual_error, density_error, viscosity_error]})} => #{inspect({srm_output, sw_output, srm_wd_res_out, srm_wd_vis_out, sw_rmd_dens_out, sw_rmd_vis_out})}")
+        IO.puts("#{inspect({out_val_srm, out_val_wd})}")
     end
 
 end
