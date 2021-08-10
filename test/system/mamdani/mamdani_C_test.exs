@@ -61,11 +61,11 @@ defmodule MamdaniCTest do
       )
 
     # Raw Material Flow Rate
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -280, -1000])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -200, -1000])
     ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-250, -125, -20])
     ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-30, 0, 30])
     ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [20, 125, 250])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [280, 600, 1000])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [200, 600, 1000])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
 
@@ -97,11 +97,11 @@ defmodule MamdaniCTest do
     # Outputs
 
     # Raw Material Flow Rate
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -280, -1000])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -200, -1000])
     ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-250, -125, -20])
     ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-30, 0, 30])
     ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [20, 125, 250])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [280, 600, 1000])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [200, 600, 1000])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
 
@@ -131,11 +131,11 @@ defmodule MamdaniCTest do
       )
 
     # Water Flow Rate
-    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -280, -1000])
+    nb = Set.new(tag: "mb", mf_type: "saturation", mf_params: [-600, -200, -1000])
     ns = Set.new(tag: "ms", mf_type: "triangle", mf_params: [-250, -125, -20])
     ze = Set.new(tag: "ze", mf_type: "triangle", mf_params: [-30, 0, 30])
     ps = Set.new(tag: "ps", mf_type: "triangle", mf_params: [20, 125, 250])
-    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [280, 600, 1000])
+    pb = Set.new(tag: "pb", mf_type: "shoulder", mf_params: [200, 600, 1000])
 
     fuzzy_sets = [nb, ns, ze, ps, pb]
 
@@ -791,7 +791,7 @@ defmodule MamdaniCTest do
     srm_delta_output = System.compute(srm_out_pid, [srm_output, sw_output])
     sw_delta_output = System.compute(sw_out_pid, [srm_output, sw_output])
 
-    IO.puts("#{inspect({[residual_error, viscosity_error], [density_error, viscosity_error]})} => #{inspect({srm_delta_output + offset_rm, sw_delta_output + offset_w})}")
-    #IO.puts("#{inspect({srm_delta_output + offset_rm, sw_delta_output + offset_w})}")
+    #IO.puts("#{inspect({[residual_error, viscosity_error], [density_error, viscosity_error]})} => #{inspect({srm_delta_output + offset_rm, sw_delta_output + offset_w})}")
+    IO.puts("#{inspect({srm_delta_output + offset_rm, sw_delta_output + offset_w})}")
   end
 end
