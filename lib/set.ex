@@ -57,6 +57,9 @@ defmodule Flex.Set do
         "gaussian" ->
           MembershipFun.gaussian(mf_params)
 
+        "bell" ->
+          MembershipFun.gbell(mf_params)
+
         "pi_shaped" ->
           MembershipFun.pi_shaped(mf_params)
 

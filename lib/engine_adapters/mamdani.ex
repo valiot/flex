@@ -52,7 +52,7 @@ defmodule Flex.EngineAdapter.Mamdani do
 
   defp output_combination(cons_var) do
     output = Enum.map(cons_var.fuzzy_sets, fn x -> root_sum_square(cons_var.mf_values[x.tag]) end)
-    %{cons_var | tmp: output}
+    %{cons_var | rule_output: output}
   end
 
   defp root_sum_square(nil), do: 0.0
@@ -69,7 +69,7 @@ defmodule Flex.EngineAdapter.Mamdani do
   """
   @spec centroid_method(Flex.Variable.t()) :: float
   def centroid_method(%Variable{type: type} = fuzzy_var) when type == :consequent do
-    fuzzy_to_crisp(fuzzy_var.fuzzy_sets, fuzzy_var.tmp, 0, 0)
+    fuzzy_to_crisp(fuzzy_var.fuzzy_sets, fuzzy_var.rule_output, 0, 0)
   end
 
   defp fuzzy_to_crisp([], _input, nom, den), do: nom / den

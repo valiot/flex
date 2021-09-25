@@ -56,9 +56,15 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
 
   defp compute_output_level(cons_var, input_vector) do
     rules_output =
-      Enum.map(cons_var.fuzzy_sets, fn output_fuzzy_set -> output_fuzzy_set.mf.(input_vector) end)
+      Enum.reduce(cons_var.fuzzy_sets, [], fn output_fuzzy_set, acc ->
+        output_value =
+          for _ <- cons_var.mf_values[output_fuzzy_set.tag], into: [] do
+            output_fuzzy_set.mf.(input_vector)
+          end
+        acc ++ output_value
+      end)
 
-    %{cons_var | tmp: rules_output}
+    %{cons_var | rule_output: rules_output}
   end
 
   @doc """
@@ -68,7 +74,7 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
   def weighted_average_method(%Variable{type: type} = fuzzy_var) when type == :consequent do
     fuzzy_var
     |> build_fuzzy_sets_strength_list()
-    |> fuzzy_to_crisp(fuzzy_var.tmp, 0, 0)
+    |> fuzzy_to_crisp(fuzzy_var.rule_output, 0, 0)
   end
 
   defp build_fuzzy_sets_strength_list(%Variable{fuzzy_sets: fuzzy_sets, mf_values: mf_values}) do

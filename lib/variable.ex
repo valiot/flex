@@ -8,7 +8,7 @@ defmodule Flex.Variable do
             fuzzy_sets: nil,
             mf_values: %{},
             range: nil,
-            tmp: nil,
+            rule_output: nil,
             type: nil
 
   @typedoc """

@@ -55,7 +55,7 @@ defmodule Flex.Rule do
         raise("only the consequent variable can use the THEN operation")
 
       :consequent ->
-        %{b | tmp: a}
+        %{b | rule_output: a}
     end
   end
 
@@ -68,7 +68,7 @@ defmodule Flex.Rule do
         a.mf_values[b]
 
       :consequent ->
-        new_values = Map.get(a.mf_values, b, []) ++ [a.tmp]
+        new_values = Map.get(a.mf_values, b, []) ++ [a.rule_output]
         mf_values = Map.put(a.mf_values, b, new_values)
         %{a | mf_values: mf_values}
     end

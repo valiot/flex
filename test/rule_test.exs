@@ -49,7 +49,7 @@ defmodule RuleTest do
   end
 
   test " ~> 'is' operator for consequent vars", %{ant: [_error, _dt_error], cons: output} do
-    output = %{output | tmp: 0.75}
+    output = %{output | rule_output: 0.75}
     n_output = output ~> "just right"
     assert n_output.mf_values["just right"] == [0.75]
     n_output = n_output ~> "just right"
@@ -63,7 +63,7 @@ defmodule RuleTest do
   end
 
   test " >>> 'then' operator for consequent vars", %{ant: [_error, _dt_error], cons: output} do
-    d_output = %{output | tmp: 0.75}
+    d_output = %{output | rule_output: 0.75}
     assert 0.75 >>> output == d_output
   end
 

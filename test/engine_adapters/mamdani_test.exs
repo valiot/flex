@@ -300,7 +300,7 @@ defmodule MamdaniTest do
     error =
       Variable.new(tag: "error", fuzzy_sets: fuzzy_sets, type: :consequent, range: -100..100)
 
-    error = %{error | tmp: [0.866, 0.5, 0]}
+    error = %{error | rule_output: [0.866, 0.5, 0]}
     output = Mamdani.centroid_method(error)
     assert Float.floor(output, 1) == -63.4
   end
