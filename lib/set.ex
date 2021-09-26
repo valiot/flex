@@ -81,4 +81,17 @@ defmodule Flex.Set do
 
     %Set{mf_type: mf_type, tag: tag, mf: mf, mf_params: mf_params, mf_center: c}
   end
+
+  @doc """
+  Updates a Fuzzy set depending on the gradient.
+  """
+  @spec update(Flex.Set.t(), list(), number()) :: Flex.Set.t()
+  def update(fuzzy_set, gradient, learning_rate) do
+    new_mf_params =
+      fuzzy_set.mf_params
+      |> Enum.zip(gradient)
+      |> Enum.map(fn {aij, gradient_j} -> aij - learning_rate * gradient_j end)
+
+    new(mf_type: fuzzy_set.mf_type, tag: fuzzy_set.tag, mf_params: new_mf_params)
+  end
 end

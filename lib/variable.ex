@@ -1,5 +1,5 @@
 defmodule Flex.Variable do
-  alias Flex.Variable
+  alias Flex.{Variable, Set}
 
   @moduledoc """
   An interface to create Fuzzy Variables.
@@ -43,6 +43,18 @@ defmodule Flex.Variable do
     fuzzy_sets = Keyword.fetch!(params, :fuzzy_sets)
     type = Keyword.fetch!(params, :type)
     %Variable{range: range, fuzzy_sets: fuzzy_sets, type: type, tag: tag}
+  end
+
+  @doc """
+  Updates a Fuzzy Variable (ANFIS).
+  """
+  @spec update(Flex.Variable.t(), list(), number()) :: Flex.Variable.t()
+  def update(fuzzy_variable, gradients, learning_rate) do
+    new_fuzzy_sets =
+      fuzzy_variable.fuzzy_sets
+      |> Enum.zip(gradients)
+      |> Enum.map(fn {fuzzy_set, gradient} -> Set.update(fuzzy_set, gradient, learning_rate) end)
+    %{fuzzy_variable | fuzzy_sets: new_fuzzy_sets, rule_output: nil, mf_values: %{}}
   end
 
   @doc """
