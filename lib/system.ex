@@ -17,6 +17,8 @@ defmodule Flex.System do
               consequent: nil,
               engine_type: Mamdani,
               engine_output: %EngineAdapter.State{},
+              sets_in_rules: [],
+              back_pass_active?: true,
               learning_rate: 0.05
   end
 
@@ -26,8 +28,9 @@ defmodule Flex.System do
   - `:consequent` - Output variable.
   - `:antecedents` - a list of the input variables.
   - `:engine_type` - defines the inference engine behavior (default: Mamdini).
-  - `:engine_output` - previous engine state with its output.
-  - `:engine_output` - previous engine state with its output.
+  - `:sets_in_rules` - list of sets involve in the rules (optional, required by ANFIS).
+  - `:learning_rate` - is the speed at which the system parameters are adjusted (ANFIS only).
+  - `:back_pass_active?` - enables/disables premise parameters adjustments (ANFIS only).
   """
   @type t :: %Flex.System.State{
           rules: [Flex.Rule.t(), ...],
@@ -35,6 +38,8 @@ defmodule Flex.System do
           consequent: Flex.Variable.t(),
           engine_type: Mamdani | TakagiSugeno | ANFIS,
           engine_output: EngineAdapter.engine_state(),
+          sets_in_rules: list(),
+          back_pass_active?: boolean(),
           learning_rate: number()
         }
 
@@ -64,7 +69,7 @@ defmodule Flex.System do
 
   @doc """
   Adjust the free parameters of the FIS (only avaliable with ANFIS engine), using the following methods:
-    - Learning method: Backpropagation.
+    - Learning method: Steepest gradient Backpropagation.
     - Energy function: 0.5 * (target - output)^2
   """
   @spec adapt(atom | pid | {atom, any} | {:via, atom, any}, number()) ::
@@ -93,7 +98,16 @@ defmodule Flex.System do
     GenServer.call(pid, {:set_learning_rate, learning_rate})
   end
 
-  def set_learning_rate(_pid, _learning_rate), do: {:error, :einval}
+  @doc """
+  Enables/Disable Back pass premise parameters adjustment.
+  """
+  @spec set_back_pass_active?(atom | pid | {atom, any} | {:via, atom, any}, boolean()) ::
+          :ok | {:error, :einval}
+  def set_back_pass_active?(pid, back_pass_active?) when is_boolean(back_pass_active?) do
+    GenServer.call(pid, {:set_back_pass_active?, back_pass_active?})
+  end
+
+  def set_back_pass_active?(_pid, _back_pass_active?), do: {:error, :einval}
 
   @doc """
   Gets the current system state.
@@ -110,6 +124,7 @@ defmodule Flex.System do
 
     engine_type = Keyword.get(params, :engine_type, Mamdani)
     learning_rate = Keyword.get(params, :learning_rate, 0.05)
+    sets_in_rules = Keyword.get(params, :sets_in_rules, [])
 
     {:ok,
      %State{
@@ -117,7 +132,8 @@ defmodule Flex.System do
        antecedents: antecedents,
        consequent: consequent,
        engine_type: engine_type,
-       learning_rate: learning_rate
+       learning_rate: learning_rate,
+       sets_in_rules: sets_in_rules
      }}
   end
 
@@ -130,6 +146,21 @@ defmodule Flex.System do
       |> EngineAdapter.defuzzification()
 
     {:reply, output.crisp_output, %{state | engine_output: output}}
+  end
+
+  def handle_call(
+        {:adapt, target},
+        _from,
+        %{engine_type: engine_type, engine_output: engine_output, back_pass_active?: true} = state
+      )
+      when engine_type == ANFIS do
+    dE_do5 = -(target - engine_output.crisp_output)
+
+    consequent = ANFIS.forward_pass(dE_do5, state.learning_rate, engine_output)
+
+    antecedents = ANFIS.backward_pass(dE_do5, state, engine_output)
+
+    {:reply, {:ok, dE_do5}, %{state | consequent: consequent, antecedents: antecedents}}
   end
 
   def handle_call(
@@ -158,6 +189,14 @@ defmodule Flex.System do
   end
 
   def handle_call({:set_learning_rate, _learning_rate}, _from, state),
+    do: {:reply, {:error, :einval}, state}
+
+  def handle_call({:set_back_pass_active?, back_pass_active?}, _from, %{engine_type: engine_type} = state)
+      when engine_type == ANFIS do
+    {:reply, :ok, %{state | back_pass_active?: back_pass_active?}}
+  end
+
+  def handle_call({:set_back_pass_active?, _back_pass_active?}, _from, state),
     do: {:reply, {:error, :einval}, state}
 
   def handle_call(:get_state, _from, state),
