@@ -156,6 +156,36 @@ defmodule Flex.MembershipFun do
   def gbell([_c, _s, b]), do: raise(ArgumentError, "Bad width of the curve: #{b}")
 
   @doc """
+  Generalized Bell membership  derivatived function.
+    * `c` - (number) Center.
+    * `s` - (number) Slope.
+    * `b` - (number) The width of the curve, it must not be equal to 0.
+
+  Definition of Generalized Bell function is:
+        y(x) = 1 / (1 + |((x - c) / b)|^(2 * s))
+  """
+  # Respect to the Mean (Center)
+  def d_gbell([c, s, b], x, mu, 0) when b != 0 and x != c,
+    do: 2 * s * mu * (1 - mu) / (x - c)
+
+  def d_gbell([_c, _s, b], _x, _mu, 0) when b != 0, do: 0
+
+  # Respect to the Slope
+  def d_gbell([c, _s, b], x, mu, 1) when b != 0 and x != c,
+    do: -2 * log(abs((x - c) / b)) * mu * (1 - mu)
+
+  def d_gbell([_c, _s, b], _x, _mu, 1) when b != 0, do: 0
+
+  # Respect to the Width
+  def d_gbell([c, s, b], x, mu, 2) when b != 0 and x != c,
+    do: 2 * s * mu * (1 - mu) / b
+
+  def d_gbell([_c, _s, b], _x, _mu, 2) when b != 0, do: 0
+
+  def d_gbell([_c, _s, b], _x, _mu, _darg_index),
+    do: raise(ArgumentError, "Bad width of the curve: #{b}")
+
+  @doc """
   Sigmoidal membership function.
     * `c` - (number) Crossover point.
     * `s` - (number) Slope.
@@ -322,5 +352,21 @@ defmodule Flex.MembershipFun do
     input_vector
     |> Enum.zip(coefficients)
     |> Enum.reduce(0, fn {input, coefficient}, acc -> acc + (input * coefficient) end)
+  end
+
+  @doc """
+  An interface to execute derivatives of membership functions, where,
+    * `z_i` - is the i'th rule output.
+    * `x, y` - are the values of input 1 and input 2, respectively.
+    * `a_i, b_i, and c_i` - are constant coefficients of the i'th rule output.
+    For a zero-order Takagi-Sugeno system, z_i is a constant (a = b = 0).
+  """
+  def derivative(fuzzy_set, input, membership_grade, darg_index) do
+    case fuzzy_set.mf_type do
+      "bell" ->
+        d_gbell(fuzzy_set.mf_params, input, membership_grade, darg_index)
+      _ ->
+        raise("Derivative #{inspect(fuzzy_set.mf_type)} not supported.")
+    end
   end
 end
