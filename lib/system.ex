@@ -18,7 +18,6 @@ defmodule Flex.System do
               engine_type: Mamdani,
               engine_output: %EngineAdapter.State{},
               sets_in_rules: [],
-              back_pass_active?: true,
               learning_rate: 0.05
   end
 
@@ -30,7 +29,6 @@ defmodule Flex.System do
   - `:engine_type` - defines the inference engine behavior (default: Mamdini).
   - `:sets_in_rules` - list of sets involve in the rules (optional, required by ANFIS).
   - `:learning_rate` - is the speed at which the system parameters are adjusted (ANFIS only).
-  - `:back_pass_active?` - enables/disables premise parameters adjustments (ANFIS only).
   """
   @type t :: %Flex.System.State{
           rules: [Flex.Rule.t(), ...],
@@ -39,7 +37,6 @@ defmodule Flex.System do
           engine_type: Mamdani | TakagiSugeno | ANFIS,
           engine_output: EngineAdapter.engine_state(),
           sets_in_rules: list(),
-          back_pass_active?: boolean(),
           learning_rate: number()
         }
 
@@ -68,14 +65,37 @@ defmodule Flex.System do
   end
 
   @doc """
-  Adjust the free parameters of the FIS (only avaliable with ANFIS engine), using the following methods:
+  Adjust the consequent free parameters of the FIS (only avaliable with ANFIS engine), using the following methods:
     - Learning method: Steepest gradient Backpropagation.
     - Energy function: 0.5 * (target - output)^2
   """
-  @spec adapt(atom | pid | {atom, any} | {:via, atom, any}, number()) ::
+  @spec forward_pass(atom | pid | {atom, any} | {:via, atom, any}, number()) ::
           {:ok, number()} | {:error, :einval}
-  def adapt(pid, desired_output) when is_number(desired_output) do
-    GenServer.call(pid, {:adapt, desired_output})
+  def forward_pass(pid, desired_output) when is_number(desired_output) do
+    GenServer.call(pid, {:forward_pass, desired_output})
+  end
+
+  @doc """
+  Adjust the premise free parameters of the FIS (only avaliable with ANFIS engine), using the following methods:
+    - Learning method: Steepest gradient Backpropagation.
+    - Energy function: 0.5 * (target - output)^2
+  """
+  @spec backward_pass(atom | pid | {atom, any} | {:via, atom, any}, number()) ::
+          {:ok, number()} | {:error, :einval}
+  def backward_pass(pid, desired_output) when is_number(desired_output) do
+    GenServer.call(pid, {:backward_pass, desired_output})
+  end
+
+  @doc """
+  Adjust the free parameters of the FIS (only avaliable with ANFIS engine), using the following methods:
+    - Learning method: Steepest gradient Backpropagation.
+    - Energy function: 0.5 * (target - output)^2
+  Note: this functions fires both forward and backward passes.
+  """
+  @spec hybrid_online_learning(atom | pid | {atom, any} | {:via, atom, any}, number()) ::
+          {:ok, number()} | {:error, :einval}
+  def hybrid_online_learning(pid, desired_output) when is_number(desired_output) do
+    GenServer.call(pid, {:hybrid_online_learning, desired_output})
   end
 
   @doc """
@@ -97,17 +117,6 @@ defmodule Flex.System do
   def set_learning_rate(pid, learning_rate) when is_number(learning_rate) do
     GenServer.call(pid, {:set_learning_rate, learning_rate})
   end
-
-  @doc """
-  Enables/Disable Back pass premise parameters adjustment.
-  """
-  @spec set_back_pass_active?(atom | pid | {atom, any} | {:via, atom, any}, boolean()) ::
-          :ok | {:error, :einval}
-  def set_back_pass_active?(pid, back_pass_active?) when is_boolean(back_pass_active?) do
-    GenServer.call(pid, {:set_back_pass_active?, back_pass_active?})
-  end
-
-  def set_back_pass_active?(_pid, _back_pass_active?), do: {:error, :einval}
 
   @doc """
   Gets the current system state.
@@ -149,22 +158,7 @@ defmodule Flex.System do
   end
 
   def handle_call(
-        {:adapt, target},
-        _from,
-        %{engine_type: engine_type, engine_output: engine_output, back_pass_active?: true} = state
-      )
-      when engine_type == ANFIS do
-    dE_do5 = -(target - engine_output.crisp_output)
-
-    consequent = ANFIS.forward_pass(dE_do5, state.learning_rate, engine_output)
-
-    antecedents = ANFIS.backward_pass(dE_do5, state, engine_output)
-
-    {:reply, {:ok, dE_do5}, %{state | consequent: consequent, antecedents: antecedents}}
-  end
-
-  def handle_call(
-        {:adapt, target},
+        {:forward_pass, target},
         _from,
         %{engine_type: engine_type, engine_output: engine_output} = state
       )
@@ -176,8 +170,33 @@ defmodule Flex.System do
     {:reply, {:ok, dE_do5}, %{state | consequent: consequent}}
   end
 
-  def handle_call({:adapt, _target}, _from, state),
-    do: {:reply, {:error, :einval}, state}
+  def handle_call(
+        {:backward_pass, target},
+        _from,
+        %{engine_type: engine_type, engine_output: engine_output} = state
+      )
+      when engine_type == ANFIS do
+    dE_do5 = -(target - engine_output.crisp_output)
+
+    antecedents = ANFIS.backward_pass(dE_do5, state, engine_output)
+
+    {:reply, {:ok, dE_do5}, %{state | antecedents: antecedents}}
+  end
+
+  def handle_call(
+        {:hybrid_online_learning, target},
+        _from,
+        %{engine_type: engine_type, engine_output: engine_output} = state
+      )
+      when engine_type == ANFIS do
+    dE_do5 = -(target - engine_output.crisp_output)
+
+    consequent = ANFIS.forward_pass(dE_do5, state.learning_rate, engine_output)
+
+    antecedents = ANFIS.backward_pass(dE_do5, state, engine_output)
+
+    {:reply, {:ok, dE_do5}, %{state | consequent: consequent, antecedents: antecedents}}
+  end
 
   def handle_call({:set_engine_type, type}, _from, state) do
     {:reply, :ok, %{state | engine_type: type}}
@@ -191,14 +210,10 @@ defmodule Flex.System do
   def handle_call({:set_learning_rate, _learning_rate}, _from, state),
     do: {:reply, {:error, :einval}, state}
 
-  def handle_call({:set_back_pass_active?, back_pass_active?}, _from, %{engine_type: engine_type} = state)
-      when engine_type == ANFIS do
-    {:reply, :ok, %{state | back_pass_active?: back_pass_active?}}
-  end
-
-  def handle_call({:set_back_pass_active?, _back_pass_active?}, _from, state),
-    do: {:reply, {:error, :einval}, state}
-
   def handle_call(:get_state, _from, state),
     do: {:reply, {:ok, state}, state}
+
+  # Catch invalid calls
+  def handle_call({_call, _target}, _from, state),
+    do: {:reply, {:error, :einval}, state}
 end
