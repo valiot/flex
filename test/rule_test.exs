@@ -1,7 +1,7 @@
 defmodule RuleTest do
   use ExUnit.Case
   import Flex.Rule
-  alias Flex.{Set, Variable, Rule}
+  alias Flex.{Rule, Set, Variable}
   doctest Flex
 
   setup do

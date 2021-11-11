@@ -6,7 +6,7 @@ defmodule Flex.EngineAdapter.ANFIS do
   https://upcommons.upc.edu/bitstream/handle/2099.1/20296/Annex%201%20-%20Introduction%20to%20Adaptive%20Neuro-Fuzzy%20Inference%20Systems%20%28ANFIS%29.pdf
   Jang, J-SR. "ANFIS: adaptive-network-based fuzzy inference system." IEEE transactions on systems, man, and cybernetics 23.3 (1993): 665-685.
   """
-  alias Flex.{Variable, MembershipFun, EngineAdapter, EngineAdapter.State}
+  alias Flex.{EngineAdapter, EngineAdapter.State, MembershipFun, Variable}
   @behaviour EngineAdapter
 
   import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]
@@ -57,26 +57,26 @@ defmodule Flex.EngineAdapter.ANFIS do
     inference_engine(fuzzy_antecedents, tail, consequent)
   end
 
-  def forward_pass(dE_dy, learning_rate, %{
+  def forward_pass(de_dy, learning_rate, %{
         fuzzy_consequent: fuzzy_consequent,
         input_vector: input_vector
       }) do
     w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten()
     n_w = Enum.map(w, fn w_i -> w_i / Enum.sum(w) end)
 
-    dy_dBc =
+    dy_dbc =
       Enum.map(n_w, fn n_w_i -> Enum.map(input_vector ++ [1], fn input -> input * n_w_i end) end)
 
-    dE_dBc =
-      Enum.map(dy_dBc, fn dy_dBc_f ->
-        Enum.map(dy_dBc_f, fn dy_dBc_fi -> dE_dy * dy_dBc_fi end)
+    de_dbc =
+      Enum.map(dy_dbc, fn dy_dbc_f ->
+        Enum.map(dy_dbc_f, fn dy_dbc_fi -> de_dy * dy_dbc_fi end)
       end)
 
-    Variable.update(fuzzy_consequent, dE_dBc, learning_rate)
+    Variable.update(fuzzy_consequent, de_dbc, learning_rate)
   end
 
   def backward_pass(
-        dE_dy,
+        de_dy,
         %{
           antecedents: antecedents,
           sets_in_rules: sets_in_rules,
@@ -101,7 +101,7 @@ defmodule Flex.EngineAdapter.ANFIS do
     for {ant_tag, i_index} <- ant_list, reduce: [] do
       acc ->
         # Sets loop
-        dE_da =
+        de_da =
           for fuzzy_set <- fuzzy_antecedents[ant_tag].fuzzy_sets, reduce: [] do
             acc ->
               # Get dependent rules.
@@ -115,16 +115,17 @@ defmodule Flex.EngineAdapter.ANFIS do
               muij = fuzzy_antecedents[ant_tag].mf_values[fuzzy_set.tag]
 
               # Premise parameters loop
-              dE_dag =
+              de_dag =
                 for {_aij, g_index} <- Enum.with_index(fuzzy_set.mf_params), reduce: [] do
                   acc ->
                     dmuij_daij =
                       derivative(fuzzy_set, Enum.at(input_vector, i_index), muij, g_index)
 
-                    dE_daij =
+                    de_daij =
                       for {w_i, w_index} <- w_d, reduce: 0 do
                         acc ->
                           dwi_dmuij = w_i / muij
+
                           sum_dy_dwi =
                             for {fi, k_index} <- Enum.with_index(fuzzy_consequent.rule_output),
                                 reduce: 0 do
@@ -132,31 +133,36 @@ defmodule Flex.EngineAdapter.ANFIS do
                                 dy_dnwi = fi
                                 dnwi_dwi = dnwi_dwi(n_w, w, w_index, k_index)
                                 acc + dy_dnwi * dnwi_dwi
-                              end
-                          acc + dE_dy * sum_dy_dwi * dwi_dmuij * dmuij_daij
+                            end
+
+                          acc + de_dy * sum_dy_dwi * dwi_dmuij * dmuij_daij
                       end
-                    acc ++ [dE_daij]
+
+                    acc ++ [de_daij]
                 end
-              acc ++ [dE_dag]
+
+              acc ++ [de_dag]
           end
-      acc ++ [Variable.update(fuzzy_antecedents[ant_tag], dE_da, learning_rate)]
+
+        acc ++ [Variable.update(fuzzy_antecedents[ant_tag], de_da, learning_rate)]
     end
   end
 
   defp dnwi_dwi(n_w, w, w_index, k_index) when w_index == k_index do
-    with  n_w_k <- Enum.at(n_w, k_index),
-          w_k <- Enum.at(w, k_index),
-          true <- w_k != 0 do
+    with n_w_k <- Enum.at(n_w, k_index),
+         w_k <- Enum.at(w, k_index),
+         true <- w_k != 0 do
       n_w_k * (1 - n_w_k) / w_k
     else
       _ ->
         0
     end
   end
+
   defp dnwi_dwi(n_w, w, _w_index, k_index) do
-    with  n_w_k <- Enum.at(n_w, k_index),
-          w_k <- Enum.at(w, k_index),
-          true <- w_k != 0 do
+    with n_w_k <- Enum.at(n_w, k_index),
+         w_k <- Enum.at(w, k_index),
+         true <- w_k != 0 do
       -:math.pow(n_w_k, 2) / w_k
     else
       _ ->

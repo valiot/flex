@@ -1,5 +1,5 @@
 defmodule Flex.Set do
-  alias Flex.{Set, MembershipFun}
+  alias Flex.{MembershipFun, Set}
 
   @moduledoc """
   An interface to create Fuzzy Sets struct.
@@ -40,47 +40,30 @@ defmodule Flex.Set do
     tag = Keyword.fetch!(opt, :tag)
     mf_params = Keyword.fetch!(opt, :mf_params)
 
-    {mf, c} =
-      case mf_type do
-        "saturation" ->
-          MembershipFun.saturation(mf_params)
-
-        "shoulder" ->
-          MembershipFun.shoulder(mf_params)
-
-        "triangle" ->
-          MembershipFun.triangle(mf_params)
-
-        "trapezoidal" ->
-          MembershipFun.trapezoidal(mf_params)
-
-        "gaussian" ->
-          MembershipFun.gaussian(mf_params)
-
-        "bell" ->
-          MembershipFun.gbell(mf_params)
-
-        "pi_shaped" ->
-          MembershipFun.pi_shaped(mf_params)
-
-        "s_shaped" ->
-          MembershipFun.s_shaped(mf_params)
-
-        "z_shaped" ->
-          MembershipFun.z_shaped(mf_params)
-
-        "sigmoid" ->
-          MembershipFun.sigmoid(mf_params)
-
-        "linear_combination" ->
-          MembershipFun.linear_combination(mf_params)
-
-        _ ->
-          raise("Membership function not supported")
-      end
+    {mf, c} = build_membership_function(mf_type, mf_params)
 
     %Set{mf_type: mf_type, tag: tag, mf: mf, mf_params: mf_params, mf_center: c}
   end
+
+  defp build_membership_function("saturation", mf_params), do: MembershipFun.saturation(mf_params)
+  defp build_membership_function("shoulder", mf_params), do: MembershipFun.shoulder(mf_params)
+  defp build_membership_function("triangle", mf_params), do: MembershipFun.triangle(mf_params)
+
+  defp build_membership_function("trapezoidal", mf_params),
+    do: MembershipFun.trapezoidal(mf_params)
+
+  defp build_membership_function("gaussian", mf_params), do: MembershipFun.gaussian(mf_params)
+  defp build_membership_function("bell", mf_params), do: MembershipFun.gbell(mf_params)
+  defp build_membership_function("pi_shaped", mf_params), do: MembershipFun.pi_shaped(mf_params)
+  defp build_membership_function("s_shaped", mf_params), do: MembershipFun.s_shaped(mf_params)
+  defp build_membership_function("z_shaped", mf_params), do: MembershipFun.z_shaped(mf_params)
+  defp build_membership_function("sigmoid", mf_params), do: MembershipFun.sigmoid(mf_params)
+
+  defp build_membership_function("linear_combination", mf_params),
+    do: MembershipFun.linear_combination(mf_params)
+
+  defp build_membership_function(_mf_type, _mf_params),
+    do: raise("Membership function not supported")
 
   @doc """
   Updates a Fuzzy set depending on the gradient.

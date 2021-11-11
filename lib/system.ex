@@ -8,7 +8,7 @@ defmodule Flex.System do
   require Logger
 
   alias Flex.EngineAdapter
-  alias Flex.EngineAdapter.{Mamdani, TakagiSugeno, ANFIS}
+  alias Flex.EngineAdapter.{ANFIS, Mamdani, TakagiSugeno}
 
   defmodule State do
     @moduledoc false
@@ -163,11 +163,11 @@ defmodule Flex.System do
         %{engine_type: engine_type, engine_output: engine_output} = state
       )
       when engine_type == ANFIS do
-    dE_do5 = -(target - engine_output.crisp_output)
+    de_do5 = -(target - engine_output.crisp_output)
 
-    consequent = ANFIS.forward_pass(dE_do5, state.learning_rate, engine_output)
+    consequent = ANFIS.forward_pass(de_do5, state.learning_rate, engine_output)
 
-    {:reply, {:ok, dE_do5}, %{state | consequent: consequent}}
+    {:reply, {:ok, de_do5}, %{state | consequent: consequent}}
   end
 
   def handle_call(
@@ -176,11 +176,11 @@ defmodule Flex.System do
         %{engine_type: engine_type, engine_output: engine_output} = state
       )
       when engine_type == ANFIS do
-    dE_do5 = -(target - engine_output.crisp_output)
+    de_do5 = -(target - engine_output.crisp_output)
 
-    antecedents = ANFIS.backward_pass(dE_do5, state, engine_output)
+    antecedents = ANFIS.backward_pass(de_do5, state, engine_output)
 
-    {:reply, {:ok, dE_do5}, %{state | antecedents: antecedents}}
+    {:reply, {:ok, de_do5}, %{state | antecedents: antecedents}}
   end
 
   def handle_call(
@@ -189,13 +189,13 @@ defmodule Flex.System do
         %{engine_type: engine_type, engine_output: engine_output} = state
       )
       when engine_type == ANFIS do
-    dE_do5 = -(target - engine_output.crisp_output)
+    de_do5 = -(target - engine_output.crisp_output)
 
-    consequent = ANFIS.forward_pass(dE_do5, state.learning_rate, engine_output)
+    consequent = ANFIS.forward_pass(de_do5, state.learning_rate, engine_output)
 
-    antecedents = ANFIS.backward_pass(dE_do5, state, engine_output)
+    antecedents = ANFIS.backward_pass(de_do5, state, engine_output)
 
-    {:reply, {:ok, dE_do5}, %{state | consequent: consequent, antecedents: antecedents}}
+    {:reply, {:ok, de_do5}, %{state | consequent: consequent, antecedents: antecedents}}
   end
 
   def handle_call({:set_engine_type, type}, _from, state) do

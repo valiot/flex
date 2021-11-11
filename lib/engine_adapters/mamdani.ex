@@ -4,7 +4,7 @@ defmodule Flex.EngineAdapter.Mamdani do
   In a Mamdani system, the output of each rule is a fuzzy set. Since Mamdani systems have more intuitive and easier to understand rule bases,
   they are well-suited to expert system applications where the rules are created from human expert knowledge, such as medical diagnostics.
   """
-  alias Flex.{Variable, EngineAdapter, EngineAdapter.State}
+  alias Flex.{EngineAdapter, EngineAdapter.State, Variable}
   @behaviour EngineAdapter
 
   import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]

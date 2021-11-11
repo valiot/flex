@@ -3,8 +3,7 @@ defmodule AnfisTest do
   import Flex.Rule
   require Logger
 
-  alias Flex.{Set, Variable, Rule, System, EngineAdapter.ANFIS}
-
+  alias Flex.{EngineAdapter.ANFIS, Rule, Set, System, Variable}
 
   test "ANFIS XOR forward propagation" do
     small = Set.new(tag: "small", mf_type: "bell", mf_params: [0, 1, 0.1])
@@ -49,7 +48,12 @@ defmodule AnfisTest do
     rules = [rule1, rule2, rule3, rule4]
 
     {:ok, s_pid} =
-      System.start_link(antecedents: [x1, x2], consequent: output, rules: rules, engine_type: ANFIS)
+      System.start_link(
+        antecedents: [x1, x2],
+        consequent: output,
+        rules: rules,
+        engine_type: ANFIS
+      )
 
     assert System.compute(s_pid, [0, 0]) |> round() == 0
     assert System.compute(s_pid, [0, 1]) |> round() == 1
@@ -111,9 +115,9 @@ defmodule AnfisTest do
 
     target = 0
 
-    dE_do5 = -(target - state.engine_output.crisp_output)
+    de_do5 = -(target - state.engine_output.crisp_output)
 
-    new_consequent = ANFIS.forward_pass(dE_do5, state.learning_rate, state.engine_output)
+    new_consequent = ANFIS.forward_pass(de_do5, state.learning_rate, state.engine_output)
 
     refute state.consequent == new_consequent
   end
@@ -170,7 +174,15 @@ defmodule AnfisTest do
       ["large", "large"]
     ]
 
-    {:ok, s_pid} = System.start_link(antecedents: [x1, x2], consequent: output, rules: rules, sets_in_rules: sets_in_rules, learning_rate: 0.05)
+    {:ok, s_pid} =
+      System.start_link(
+        antecedents: [x1, x2],
+        consequent: output,
+        rules: rules,
+        sets_in_rules: sets_in_rules,
+        learning_rate: 0.05
+      )
+
     :ok = System.set_engine_type(s_pid, ANFIS)
 
     refute System.compute(s_pid, [0, 0]) == 0
@@ -178,15 +190,14 @@ defmodule AnfisTest do
 
     target = 0
 
-    dE_do5 = -(target - state.engine_output.crisp_output)
+    de_do5 = -(target - state.engine_output.crisp_output)
 
-    new_antecedents = ANFIS.backward_pass(dE_do5, state, state.engine_output)
+    new_antecedents = ANFIS.backward_pass(de_do5, state, state.engine_output)
 
     refute state.antecedents == new_antecedents
   end
 
   test "ANFIS XOR forward pass online training only" do
-
     Logger.info("**Forward Pass**")
     # the membership functions have a valid initialization
     small = Set.new(tag: "small", mf_type: "bell", mf_params: [0, 1, 0.1])
@@ -233,7 +244,14 @@ defmodule AnfisTest do
 
     rules = [rule1, rule2, rule3, rule4]
 
-    {:ok, s_pid} = System.start_link(antecedents: [x1, x2], consequent: output, rules: rules, learning_rate: 0.5)
+    {:ok, s_pid} =
+      System.start_link(
+        antecedents: [x1, x2],
+        consequent: output,
+        rules: rules,
+        learning_rate: 0.5
+      )
+
     :ok = System.set_engine_type(s_pid, ANFIS)
 
     refute System.compute(s_pid, [0, 0]) |> round == 0
@@ -254,9 +272,8 @@ defmodule AnfisTest do
     System.compute(s_pid, [1, 0]) |> inspect() |> Logger.debug()
     System.compute(s_pid, [1, 1]) |> inspect() |> Logger.debug()
 
-
     # train for 100 epochs
-    for _  <- 0..100 do
+    for _ <- 0..100 do
       System.compute(s_pid, [0, 0])
       System.forward_pass(s_pid, 0)
       System.compute(s_pid, [0, 1])
@@ -274,7 +291,7 @@ defmodule AnfisTest do
     System.compute(s_pid, [1, 0]) |> inspect() |> Logger.debug()
     System.compute(s_pid, [1, 1]) |> inspect() |> Logger.debug()
 
-    #System.get_state(s_pid) |> inspect() |> Logger.debug()
+    # System.get_state(s_pid) |> inspect() |> Logger.debug()
 
     assert System.compute(s_pid, [0, 0]) |> round == 0
     assert System.compute(s_pid, [0, 1]) |> round == 1
@@ -336,7 +353,15 @@ defmodule AnfisTest do
       ["large", "large"]
     ]
 
-    {:ok, s_pid} = System.start_link(antecedents: [x1, x2], consequent: output, rules: rules, sets_in_rules: sets_in_rules, learning_rate: 0.05)
+    {:ok, s_pid} =
+      System.start_link(
+        antecedents: [x1, x2],
+        consequent: output,
+        rules: rules,
+        sets_in_rules: sets_in_rules,
+        learning_rate: 0.05
+      )
+
     :ok = System.set_engine_type(s_pid, ANFIS)
 
     Logger.info("Pre-Training")
@@ -347,7 +372,7 @@ defmodule AnfisTest do
     System.compute(s_pid, [1, 1]) |> inspect() |> Logger.debug()
 
     # train for 100 epochs
-    for _  <- 0..100 do
+    for _ <- 0..100 do
       System.compute(s_pid, [0, 0])
       System.hybrid_online_learning(s_pid, 0)
       System.compute(s_pid, [0, 1])
@@ -425,7 +450,15 @@ defmodule AnfisTest do
       ["large", "large"]
     ]
 
-    {:ok, s_pid} = System.start_link(antecedents: [x1, x2], consequent: output, rules: rules, sets_in_rules: sets_in_rules, learning_rate: 0.5)
+    {:ok, s_pid} =
+      System.start_link(
+        antecedents: [x1, x2],
+        consequent: output,
+        rules: rules,
+        sets_in_rules: sets_in_rules,
+        learning_rate: 0.5
+      )
+
     :ok = System.set_engine_type(s_pid, ANFIS)
 
     Logger.info("Pre-Training")
@@ -436,7 +469,7 @@ defmodule AnfisTest do
     System.compute(s_pid, [1, 1]) |> inspect() |> Logger.debug()
 
     # train for 100 epochs
-    for _  <- 0..100 do
+    for _ <- 0..100 do
       System.compute(s_pid, [0, 0])
       System.hybrid_online_learning(s_pid, 0)
       System.compute(s_pid, [0, 1])

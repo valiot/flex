@@ -82,9 +82,15 @@ defmodule MfTest do
     a = b
     b = s
     mu = miu(x, a, b, c)
-    assert dmui_dcij(x, a, b, c) |> Float.round(12) == MembershipFun.derivative(small, x, mu, 0) |> Float.round(12)
-    assert dmui_dbij(x, a, b, c) |> Float.round(12) == MembershipFun.derivative(small, x, mu, 1) |> Float.round(12)
-    assert dmui_daij(x, a, b, c) |> Float.round(12) == MembershipFun.derivative(small, x, mu, 2) |> Float.round(12)
+
+    assert dmui_dcij(x, a, b, c) |> Float.round(12) ==
+             MembershipFun.derivative(small, x, mu, 0) |> Float.round(12)
+
+    assert dmui_dbij(x, a, b, c) |> Float.round(12) ==
+             MembershipFun.derivative(small, x, mu, 1) |> Float.round(12)
+
+    assert dmui_daij(x, a, b, c) |> Float.round(12) ==
+             MembershipFun.derivative(small, x, mu, 2) |> Float.round(12)
 
     x = 0
     a = b
@@ -167,19 +173,26 @@ defmodule MfTest do
   test "Linear combination mf exceptions" do
     {mf, c} = MembershipFun.linear_combination([1, 2, 2, 100])
     assert c == nil
-    assert_raise ArgumentError, "Invalid input_vector data type: 30, it must be a list.", fn ->  mf.(30) end
+
+    assert_raise ArgumentError, "Invalid input_vector data type: 30, it must be a list.", fn ->
+      mf.(30)
+    end
+
     desired_exceptions =
       "Invalid size between the coefficients: [1, 2, 2, 100] and the input_vector: [1, 2] (length(input_vector) + 1 == length(coefficients))"
-    assert_raise ArgumentError, desired_exceptions, fn ->  mf.([1, 2]) end
+
+    assert_raise ArgumentError, desired_exceptions, fn -> mf.([1, 2]) end
   end
 
   def dmui_daij(x, a, b, c), do: 2 * b * pow(fi(x, a, c), 2 * b) * pow(miu(x, a, b, c), 2) / a
 
   def dmui_dbij(x, _a, _b, c) when x == c, do: 0
+
   def dmui_dbij(x, a, b, c),
     do: -2 * pow(fi(x, a, c), 2 * b) * pow(miu(x, a, b, c), 2) * log(fi(x, a, c))
 
   def dmui_dcij(x, _a, _b, c) when x == c, do: 0
+
   def dmui_dcij(x, a, b, c),
     do: 2 * b * pow(fi(x, a, c), 2 * b) * pow(miu(x, a, b, c), 2) / (x - c)
 

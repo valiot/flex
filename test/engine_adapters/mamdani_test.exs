@@ -1,7 +1,7 @@
 defmodule MamdaniTest do
   use ExUnit.Case
   import Flex.Rule
-  alias Flex.{Set, Variable, Rule, System, EngineAdapter.Mamdani}
+  alias Flex.{EngineAdapter.Mamdani, Rule, Set, System, Variable}
   doctest Flex
 
   setup do

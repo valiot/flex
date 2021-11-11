@@ -1,6 +1,6 @@
 defmodule VariableTest do
   use ExUnit.Case
-  alias Flex.{Variable, Set}
+  alias Flex.{Set, Variable}
   doctest Flex
 
   test "fuzzification test" do
@@ -54,6 +54,6 @@ defmodule VariableTest do
     new_variable = Variable.update(output, gradients, 0.05)
 
     for {fuzzy_set, desired_mf_param} <- Enum.zip(new_variable.fuzzy_sets, desired_mf_params),
-      do: assert fuzzy_set.mf_params == desired_mf_param
+        do: assert(fuzzy_set.mf_params == desired_mf_param)
   end
 end

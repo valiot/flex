@@ -4,7 +4,7 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
   The defuzzification process for a Sugeno system is more computationally efficient compared to that of a Mamdani system,
   since it uses a weighted average or weighted sum of a few data points rather than compute a centroid of a two-dimensional area.
   """
-  alias Flex.{Variable, EngineAdapter, EngineAdapter.State}
+  alias Flex.{EngineAdapter, EngineAdapter.State, Variable}
   @behaviour EngineAdapter
 
   import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]
@@ -61,6 +61,7 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
           for _ <- cons_var.mf_values[output_fuzzy_set.tag], into: [] do
             output_fuzzy_set.mf.(input_vector)
           end
+
         acc ++ output_value
       end)
 

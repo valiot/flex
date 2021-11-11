@@ -1,7 +1,7 @@
 defmodule TakagiSugenoTest do
   use ExUnit.Case
   import Flex.Rule
-  alias Flex.{Set, Variable, Rule, System, EngineAdapter.TakagiSugeno}
+  alias Flex.{EngineAdapter.TakagiSugeno, Rule, Set, System, Variable}
   doctest Flex
 
   # https://www.youtube.com/watch?v=GnuseFrYctI&list=PLhdVEDm7SZ-Ph7E3bYW89UbjD6zkW-vbf&index=20

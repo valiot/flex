@@ -87,28 +87,25 @@ defmodule Flex.MembershipFun do
   def trapezoidal([a, b, c, d]) do
     ctr = (c - b) / 2
 
-    mu = fn x ->
-      cond do
-        # Left side
-        a != b and a < x and x < b ->
-          (x - a) / (b - a)
-
-        # Medium
-        b != c and b <= x and x <= c ->
-          1
-
-        # Right side
-        c != d and c < x and x < d ->
-          (c - x) / (c - d)
-
-        # Catch all
-        true ->
-          0
-      end
-    end
+    mu = fn x -> trapezoidal_func(x, a, b, c, d) end
 
     {mu, ctr}
   end
+
+  # Left side
+  defp trapezoidal_func(x, a, b, _c, _d) when a != b and a < x and x < b,
+    do: (x - a) / (b - a)
+
+  # Medium
+  defp trapezoidal_func(x, _a, b, c, _d) when b != c and b <= x and x <= c,
+    do: 1
+
+  # Right side
+  defp trapezoidal_func(x, _a, _b, c, d) when c != d and c < x and x < d,
+    do: (c - x) / (c - d)
+
+  # Catch All
+  defp trapezoidal_func(_x, _a, _b, _c, _d), do: 0
 
   @doc """
   Gaussian membership function.
@@ -276,39 +273,31 @@ defmodule Flex.MembershipFun do
   def pi_shaped([a, b, c, d]) when a <= b and b <= c and c <= d do
     center = (a + d) / 2
 
-    mu = fn x ->
-      cond do
-        x <= a ->
-          0
-
-        a <= x and x <= (a + b) / 2 ->
-          2 * pow((x - a) / (b - a), 2)
-
-        (a + b) / 2 <= x and x <= b ->
-          1 - 2 * pow((x - b) / (b - a), 2)
-
-        b <= x and x <= c ->
-          1
-
-        c <= x and x <= (c + d) / 2 ->
-          1 - 2 * pow((x - c) / (d - c), 2)
-
-        (c + d) / 2 <= x and x <= d ->
-          2 * pow((x - d) / (d - c), 2)
-
-        x >= d ->
-          0
-
-        # Catch all
-        true ->
-          0
-      end
-    end
+    mu = fn x -> pi_shaped_func(x, a, b, c, d) end
 
     {mu, center}
   end
 
   def pi_shaped([_a, _b, _]), do: raise(ArgumentError, "a <= b <= c <= d is required.")
+
+  defp pi_shaped_func(x, a, _b, _c, _d) when x <= a, do: 0
+
+  defp pi_shaped_func(x, a, b, _c, _d) when a <= x and x <= (a + b) / 2,
+    do: 2 * pow((x - a) / (b - a), 2)
+
+  defp pi_shaped_func(x, a, b, _c, _d) when (a + b) / 2 <= x and x <= b,
+    do: 1 - 2 * pow((x - b) / (b - a), 2)
+
+  defp pi_shaped_func(x, _a, b, c, _d) when b <= x and x <= c, do: 1
+
+  defp pi_shaped_func(x, _a, _b, c, d) when c <= x and x <= (c + d) / 2,
+    do: 1 - 2 * pow((x - c) / (d - c), 2)
+
+  defp pi_shaped_func(x, _a, _b, c, d) when (c + d) / 2 <= x and x <= d,
+    do: 2 * pow((x - d) / (d - c), 2)
+
+  defp pi_shaped_func(x, _a, _b, _c, d) when x >= d, do: 0
+  defp pi_shaped_func(_x, _a, _b, _c, _d), do: 0
 
   @doc """
   For Takagi-Sugeno-Kang fuzzy inference, uses this output membership functions that are either constant
@@ -334,14 +323,22 @@ defmodule Flex.MembershipFun do
       cond do
         # Invalid data type
         not is_list(input_vector) ->
-          raise(ArgumentError, "Invalid input_vector data type: #{inspect(input_vector)}, it must be a list.")
+          raise(
+            ArgumentError,
+            "Invalid input_vector data type: #{inspect(input_vector)}, it must be a list."
+          )
+
         # Valid input_vector and coefficients.
         length(input_vector) + 1 == length(coefficients) ->
           {coefficients, [constant]} = Enum.split(coefficients, -1)
           linear_combination(input_vector, coefficients) + constant
+
         # Catch all
         true ->
-          raise(ArgumentError, "Invalid size between the coefficients: #{inspect(coefficients)} and the input_vector: #{inspect(input_vector)} (length(input_vector) + 1 == length(coefficients))")
+          raise(
+            ArgumentError,
+            "Invalid size between the coefficients: #{inspect(coefficients)} and the input_vector: #{inspect(input_vector)} (length(input_vector) + 1 == length(coefficients))"
+          )
       end
     end
 
@@ -351,7 +348,7 @@ defmodule Flex.MembershipFun do
   defp linear_combination(input_vector, coefficients) do
     input_vector
     |> Enum.zip(coefficients)
-    |> Enum.reduce(0, fn {input, coefficient}, acc -> acc + (input * coefficient) end)
+    |> Enum.reduce(0, fn {input, coefficient}, acc -> acc + input * coefficient end)
   end
 
   @doc """
@@ -365,6 +362,7 @@ defmodule Flex.MembershipFun do
     case fuzzy_set.mf_type do
       "bell" ->
         d_gbell(fuzzy_set.mf_params, input, membership_grade, darg_index)
+
       _ ->
         raise("Derivative #{inspect(fuzzy_set.mf_type)} not supported.")
     end

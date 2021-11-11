@@ -1,6 +1,6 @@
 defmodule Flex.EngineAdapter do
   alias Flex.Variable
-  alias Flex.EngineAdapter.{State, Mamdani, TakagiSugeno}
+  alias Flex.EngineAdapter.{Mamdani, State, TakagiSugeno}
 
   defmodule State do
     @moduledoc false

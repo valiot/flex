@@ -1,8 +1,8 @@
 defmodule SystemTest do
   use ExUnit.Case
   import Flex.Rule
-  alias Flex.{Set, Variable, Rule, System, EngineAdapter.TakagiSugeno}
-  alias Flex.EngineAdapter.{TakagiSugeno, Mamdani}
+  alias Flex.{EngineAdapter.TakagiSugeno, Rule, Set, System, Variable}
+  alias Flex.EngineAdapter.{Mamdani, TakagiSugeno}
   doctest Flex
 
   # http://robotics.ee.uwa.edu.au/courses/faulttolerant/notes/FT5.pdf
@@ -69,15 +69,32 @@ defmodule SystemTest do
       (at1 ~> "too cold" &&& at2 ~> "getting hotter") >>> con ~> "heat"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule1 =
+      Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule2 =
+      Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule3 =
+      Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule4 =
+      Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule5 =
+      Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule6 =
+      Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule7 =
+      Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule8 =
+      Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule9 =
+      Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
 
@@ -142,15 +159,32 @@ defmodule SystemTest do
       {{{{"error", "too cold", "~>"}, {"dt_error", "getting hotter", "~>"}, "&&&"}, "output",
         ">>>"}, "cool", "~>"}
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule6 = Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule7 = Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule8 = Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-    rule9 = Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+    rule1 =
+      Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule2 =
+      Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule3 =
+      Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule4 =
+      Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule5 =
+      Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule6 =
+      Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule7 =
+      Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule8 =
+      Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+
+    rule9 =
+      Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
 
     rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
 
