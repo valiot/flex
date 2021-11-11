@@ -57,19 +57,19 @@ defmodule Flex.EngineAdapter.ANFIS do
     inference_engine(fuzzy_antecedents, tail, consequent)
   end
 
-  def forward_pass(dE_do5, learning_rate, %{
+  def forward_pass(dE_dy, learning_rate, %{
         fuzzy_consequent: fuzzy_consequent,
         input_vector: input_vector
       }) do
     w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten()
     n_w = Enum.map(w, fn w_i -> w_i / Enum.sum(w) end)
 
-    do5_dBc =
+    dy_dBc =
       Enum.map(n_w, fn n_w_i -> Enum.map(input_vector ++ [1], fn input -> input * n_w_i end) end)
 
     dE_dBc =
-      Enum.map(do5_dBc, fn do5_dBc_f ->
-        Enum.map(do5_dBc_f, fn do5_dBc_fi -> dE_do5 * do5_dBc_fi end)
+      Enum.map(dy_dBc, fn dy_dBc_f ->
+        Enum.map(dy_dBc_f, fn dy_dBc_fi -> dE_dy * dy_dBc_fi end)
       end)
 
     Variable.update(fuzzy_consequent, dE_dBc, learning_rate)
@@ -90,17 +90,12 @@ defmodule Flex.EngineAdapter.ANFIS do
       ) do
     ant_list =
       antecedents
-      |> Enum.map(fn(antecedent) -> antecedent.tag end)
+      |> Enum.map(fn antecedent -> antecedent.tag end)
       |> Enum.with_index()
 
-    #IO.inspect fuzzy_antecedents
-    #IO.inspect fuzzy_consequent
-
-    #IO.puts("\n\n")
-
     # TODO: Force Rule Order
-    w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten() #|> IO.inspect()
-    #n_w = Enum.map(w, fn w_i -> w_i / Enum.sum(w) end) #|> IO.inspect()
+    w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten()
+    n_w = Enum.map(w, fn w_i -> w_i / Enum.sum(w) end)
 
     # inputs loop
     for {ant_tag, i_index} <- ant_list, reduce: [] do
@@ -109,109 +104,65 @@ defmodule Flex.EngineAdapter.ANFIS do
         dE_da =
           for fuzzy_set <- fuzzy_antecedents[ant_tag].fuzzy_sets, reduce: [] do
             acc ->
-              #IO.inspect({ant_tag, fuzzy_set.tag})
               # Get dependent rules.
               sets = Enum.map(sets_in_rules, fn sets -> Enum.at(sets, i_index) end)
-              w_d = for {w_i, set} <- Enum.zip(w, sets), fuzzy_set.tag == set, do: w_i
 
-              muij = fuzzy_antecedents[ant_tag].mf_values[fuzzy_set.tag] #|> IO.inspect(label: "muij")
+              w_d =
+                for {{w_i, set}, w_index} <- Enum.zip(w, sets) |> Enum.with_index(),
+                    fuzzy_set.tag == set,
+                    do: {w_i, w_index}
+
+              muij = fuzzy_antecedents[ant_tag].mf_values[fuzzy_set.tag]
 
               # Premise parameters loop
               dE_dag =
                 for {_aij, g_index} <- Enum.with_index(fuzzy_set.mf_params), reduce: [] do
                   acc ->
-                    #IO.inspect(g_index, label: "aij")
-                    dmuij_daij = derivative(fuzzy_set, Enum.at(input_vector, i_index), muij, g_index) #|> IO.inspect(label: "dmuij_daij")
+                    dmuij_daij =
+                      derivative(fuzzy_set, Enum.at(input_vector, i_index), muij, g_index)
 
                     dE_daij =
-                      for w_i <- w_d, reduce: 0 do
+                      for {w_i, w_index} <- w_d, reduce: 0 do
                         acc ->
-                          #IO.inspect(w_i, label: "w_i")
-                          dwi_dmuij = w_i / muij # |> IO.inspect(label: "dwi_dmuij")
-                          #IO.puts("sum from all rules") #sum from all rules
+                          dwi_dmuij = w_i / muij
                           sum_dy_dwi =
-                            for fi <- fuzzy_consequent.rule_output, reduce: 0 do
+                            for {fi, k_index} <- Enum.with_index(fuzzy_consequent.rule_output),
+                                reduce: 0 do
                               acc ->
-                                dy_dnwi = fi #|> IO.inspect(label: "dy_dnwi")
-                                #dnwi_dwi = (Enum.sum(w) - w_i) / :math.pow(Enum.sum(w), 2) #|> IO.inspect(label: "dnwi_dwi")
-                                dnwi_dwi = Enum.reduce(w, 0, fn w_j, acc -> acc + (w_j - w_i) / :math.pow(Enum.sum(w), 2) end) #|> IO.inspect(label: "dnwi_dwi")
+                                dy_dnwi = fi
+                                dnwi_dwi = dnwi_dwi(n_w, w, w_index, k_index)
                                 acc + dy_dnwi * dnwi_dwi
-                            end #|> IO.inspect(label: "sum_dy_dwi")
-                            #IO.puts("\n")
+                              end
                           acc + dE_dy * sum_dy_dwi * dwi_dmuij * dmuij_daij
-                      end #|> IO.inspect(label: "dE_daij")
-                      #IO.puts("\n\n")
+                      end
                     acc ++ [dE_daij]
-                end #|> IO.inspect(label: "dE_dag")
+                end
               acc ++ [dE_dag]
-          end #|> IO.inspect()
-          #IO.puts("\n\n") #sum from all rules
-        acc ++ [Variable.update(fuzzy_antecedents[ant_tag], dE_da, learning_rate)]
-    end #|> IO.inspect()
+          end
+      acc ++ [Variable.update(fuzzy_antecedents[ant_tag], dE_da, learning_rate)]
+    end
   end
 
-  # def backward_pass(
-  #       dE_dy,
-  #       %{
-  #         antecedents: antecedents,
-  #         sets_in_rules: sets_in_rules,
-  #         learning_rate: learning_rate
-  #       },
-  #       %{
-  #         fuzzy_antecedents: fuzzy_antecedents,
-  #         fuzzy_consequent: fuzzy_consequent,
-  #         input_vector: input_vector
-  #       }
-  #     ) do
-  #   ant_list =
-  #     antecedents
-  #     |> Enum.map(fn(antecedent) -> antecedent.tag end)
-  #     |> Enum.with_index()
-
-  #   # TODO: Force Rule Order
-  #   w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten()
-
-  #   # inputs loop
-  #   for {ant_tag, i_index} <- ant_list, reduce: [] do
-  #     acc ->
-  #       # Sets loop
-  #       dE_da =
-  #         for {fuzzy_set, _j_index} <- Enum.with_index(fuzzy_antecedents[ant_tag].fuzzy_sets), reduce: [] do
-  #           acc ->
-  #             # Get dependent rules.
-  #             sets = Enum.map(sets_in_rules, fn sets -> Enum.at(sets, i_index) end)
-  #             w_d = for {w_i, set} <- Enum.zip(w, sets), fuzzy_set.tag == set, do: w_i
-
-  #             muij = fuzzy_antecedents[ant_tag].mf_values[fuzzy_set.tag]
-
-  #             # Premise parameters loop
-  #             dE_dag =
-  #               for {_aij, g_index} <- Enum.with_index(fuzzy_set.mf_params), reduce: [] do
-  #                 acc ->
-
-  #                   dmuij_daij = derivative(fuzzy_set, Enum.at(input_vector, i_index), muij, g_index)
-
-  #                   dE_daij =
-  #                     for w_i <- w_d, reduce: 0 do
-  #                       acc ->
-  #                         dwi_dmuij = w_i / muij
-  #                         #sum from all rules
-  #                         sum_dy_dwi =
-  #                           for fi <- fuzzy_consequent.rule_output, reduce: 0 do
-  #                             acc ->
-  #                               dy_dnwi = fi
-  #                               dnwi_dwi = Enum.reduce(w, 0, fn w_j, acc -> acc + (w_j - w_i) / :math.pow(Enum.sum(w), 2) end)
-  #                               acc + dy_dnwi * dnwi_dwi
-  #                           end
-  #                         acc + dE_dy * sum_dy_dwi * dwi_dmuij * dmuij_daij
-  #                     end
-  #                   acc ++ [dE_daij]
-  #               end
-  #             acc ++ [dE_dag]
-  #         end
-  #       acc ++ [Variable.update(fuzzy_antecedents[ant_tag], dE_da, learning_rate)]
-  #   end
-  # end
+  defp dnwi_dwi(n_w, w, w_index, k_index) when w_index == k_index do
+    with  n_w_k <- Enum.at(n_w, k_index),
+          w_k <- Enum.at(w, k_index),
+          true <- w_k != 0 do
+      n_w_k * (1 - n_w_k) / w_k
+    else
+      _ ->
+        0
+    end
+  end
+  defp dnwi_dwi(n_w, w, _w_index, k_index) do
+    with  n_w_k <- Enum.at(n_w, k_index),
+          w_k <- Enum.at(w, k_index),
+          true <- w_k != 0 do
+      -:math.pow(n_w_k, 2) / w_k
+    else
+      _ ->
+        0
+    end
+  end
 
   defp compute_output_level(cons_var, input_vector) do
     rules_output =

@@ -2,7 +2,7 @@ defmodule MfTest do
   use ExUnit.Case
   alias Flex.{MembershipFun, Set}
   import Float
-  import :math
+  import :math, only: [log: 1]
   doctest Flex
 
   test "Triangle mf" do
