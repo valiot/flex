@@ -124,7 +124,7 @@ defmodule Flex.EngineAdapter.ANFIS do
                     de_daij =
                       for {w_i, w_index} <- w_d, reduce: 0 do
                         acc ->
-                          dwi_dmuij = w_i / muij
+                          dwi_dmuij = dwi_dmuij(w_i, muij)
 
                           sum_dy_dwi =
                             for {fi, k_index} <- Enum.with_index(fuzzy_consequent.rule_output),
@@ -169,6 +169,10 @@ defmodule Flex.EngineAdapter.ANFIS do
         0
     end
   end
+
+  defp dwi_dmuij(0.0, 0.0), do: 1
+  defp dwi_dmuij(w_i, 0.0), do: w_i / 1.0e-10
+  defp dwi_dmuij(w_i, muij), do: w_i / muij
 
   defp compute_output_level(cons_var, input_vector) do
     rules_output =

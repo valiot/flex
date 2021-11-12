@@ -59,6 +59,28 @@ defmodule MfTest do
     assert mf.(25) |> round(3) == 0.001
   end
 
+  test "Gaussian mdf" do
+    m = 0
+    s = 2
+    f = 1
+
+    small = Set.new(tag: "small", mf_type: "gaussian", mf_params: [m, s, f])
+
+    x = 1
+    mu = small.mf.(x)
+
+    assert MembershipFun.derivative(small, x, mu, 0) == 0.22062422564614886
+    assert MembershipFun.derivative(small, x, mu, 1) == 0.11031211282307443
+    assert MembershipFun.derivative(small, x, mu, 2) == 0
+
+    x = 2
+    mu = small.mf.(x)
+
+    assert MembershipFun.derivative(small, x, mu, 0) == 0.3032653298563167
+    assert MembershipFun.derivative(small, x, mu, 1) == 0.3032653298563167
+    assert MembershipFun.derivative(small, x, mu, 2) == 0
+  end
+
   test "Generalized Bell mf" do
     {mf, c} = MembershipFun.gbell([50, 4, 8])
     assert c == 50

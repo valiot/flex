@@ -129,6 +129,27 @@ defmodule Flex.MembershipFun do
   def gaussian([_c, s, _m]), do: raise(ArgumentError, "Bad standard deviation: #{s}")
 
   @doc """
+  Gaussian membership derivatived function.
+    * `m` - (number) Mean,
+    * `s` - (number) Standard deviation, it must not be equal to 0.
+    * `f` - (number) Fuzzification Factor.
+    * `mu` - (number) Last membership function value.
+  """
+  # Respect to the Mean (Center)
+  def d_gaussian([m, s, _f], x, mu, 0) when s != 0,
+    do: (x - m) * mu / pow(s, 2)
+
+  # do: 2 * (x - m) * exp(-(pow((x - m), 2)) / (2 * pow(s, 2))) / pow(s, 2)
+
+  # Respect to the Slope
+  def d_gaussian([m, s, _f], x, mu, 1) when s != 0,
+    do: pow(x - m, 2) * mu / pow(s, 3)
+
+  # do: 2 * pow((x - m), 2) * exp(-(pow((x - m), 2)) / (2 * pow(s, 2))) / pow(s, 3)
+
+  def d_gaussian([_m, _s, _f], _x, _mu, _arg_index), do: 0
+
+  @doc """
   Generalized Bell membership function.
     * `c` - (number) Center.
     * `s` - (number) Slope.
@@ -362,6 +383,9 @@ defmodule Flex.MembershipFun do
     case fuzzy_set.mf_type do
       "bell" ->
         d_gbell(fuzzy_set.mf_params, input, membership_grade, darg_index)
+
+      "gaussian" ->
+        d_gaussian(fuzzy_set.mf_params, input, membership_grade, darg_index)
 
       _ ->
         raise("Derivative #{inspect(fuzzy_set.mf_type)} not supported.")
