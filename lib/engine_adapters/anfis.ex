@@ -61,7 +61,7 @@ defmodule Flex.EngineAdapter.ANFIS do
         fuzzy_consequent: fuzzy_consequent,
         input_vector: input_vector
       }) do
-    w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten()
+    w = get_w(fuzzy_consequent) |> List.flatten()
     n_w = Enum.map(w, fn w_i -> w_i / Enum.sum(w) end)
 
     dy_dbc =
@@ -73,6 +73,12 @@ defmodule Flex.EngineAdapter.ANFIS do
       end)
 
     Variable.update(fuzzy_consequent, de_dbc, learning_rate)
+  end
+
+  defp get_w(fuzzy_consequent) do
+    Enum.reduce(fuzzy_consequent.fuzzy_sets, [], fn output_fuzzy_set, acc ->
+      acc ++ [fuzzy_consequent.mf_values[output_fuzzy_set.tag]]
+    end)
   end
 
   def backward_pass(
@@ -93,8 +99,7 @@ defmodule Flex.EngineAdapter.ANFIS do
       |> Enum.map(fn antecedent -> antecedent.tag end)
       |> Enum.with_index()
 
-    # TODO: Force Rule Order
-    w = fuzzy_consequent.mf_values |> Map.values() |> List.flatten()
+    w = get_w(fuzzy_consequent) |> List.flatten()
     n_w = Enum.map(w, fn w_i -> w_i / Enum.sum(w) end)
 
     # inputs loop
@@ -205,4 +210,46 @@ defmodule Flex.EngineAdapter.ANFIS do
     den = den + fs_strength
     fuzzy_to_crisp(f_tail, i_tail, nom, den)
   end
+
+  def least_square_estimate(a_matrix, b_matrix, initial_gamma, state) do
+    consequent_args_size = a_matrix |> Enum.at(0) |> Enum.count()
+    s_matrix = Nx.eye(consequent_args_size) |> Nx.multiply(initial_gamma)
+    x_vector = List.duplicate([0], consequent_args_size) |> Nx.tensor()
+
+    {_s_matrix, x_vector} =
+      for {at, bt} <- Enum.zip(a_matrix, b_matrix), reduce: {s_matrix, x_vector} do
+        {s_matrix, x_vector} ->
+          at = Nx.tensor([at])
+          a = Nx.transpose(at)
+
+          at_s = multiply(at, s_matrix)
+
+          s_a_at_s =
+            s_matrix
+            |> multiply(a)
+            |> multiply(at_s)
+
+          at_s_a_p1 =
+            at_s
+            |> multiply(a)
+            |> Nx.add(1)
+
+          s_matrix = Nx.subtract(s_matrix, Nx.divide(s_a_at_s, at_s_a_p1))
+
+          at_x = multiply(at, x_vector)
+
+          x_vector =
+            s_matrix
+            |> multiply(a)
+            |> multiply(Nx.subtract(bt, at_x))
+            |> Nx.add(x_vector)
+
+          {s_matrix, x_vector}
+      end
+
+    x_vector_lt = x_vector |> Nx.to_flat_list()
+    Variable.update(state.consequent, x_vector_lt)
+  end
+
+  defp multiply(a, b), do: Nx.dot(a, [1], b, [0])
 end

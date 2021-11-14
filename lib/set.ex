@@ -77,4 +77,12 @@ defmodule Flex.Set do
 
     new(mf_type: fuzzy_set.mf_type, tag: fuzzy_set.tag, mf_params: new_mf_params)
   end
+
+  @doc """
+  Updates a Fuzzy set with new membership function parameters.
+  """
+  @spec update(Flex.Set.t(), list()) :: Flex.Set.t()
+  def update(fuzzy_set, new_mf_params) do
+    new(mf_type: fuzzy_set.mf_type, tag: fuzzy_set.tag, mf_params: new_mf_params)
+  end
 end

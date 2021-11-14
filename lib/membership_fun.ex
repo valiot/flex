@@ -139,13 +139,9 @@ defmodule Flex.MembershipFun do
   def d_gaussian([m, s, _f], x, mu, 0) when s != 0,
     do: (x - m) * mu / pow(s, 2)
 
-  # do: 2 * (x - m) * exp(-(pow((x - m), 2)) / (2 * pow(s, 2))) / pow(s, 2)
-
   # Respect to the Slope
   def d_gaussian([m, s, _f], x, mu, 1) when s != 0,
     do: pow(x - m, 2) * mu / pow(s, 3)
-
-  # do: 2 * pow((x - m), 2) * exp(-(pow((x - m), 2)) / (2 * pow(s, 2))) / pow(s, 3)
 
   def d_gaussian([_m, _s, _f], _x, _mu, _arg_index), do: 0
 

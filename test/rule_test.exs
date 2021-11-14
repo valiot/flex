@@ -33,6 +33,12 @@ defmodule RuleTest do
     %{ant: [error, dt_error], cons: output}
   end
 
+  test "tau 'fuzzy and (product)' operator", %{ant: [error, _dt_error], cons: _output} do
+    n_error = Variable.fuzzification(error, -1)
+    assert n_error ~> "just right" == 0.5
+    assert tau(n_error ~> "just right", 0.3) == 0.15
+  end
+
   test "&&& 'fuzzy and' operator", %{ant: [error, _dt_error], cons: _output} do
     n_error = Variable.fuzzification(error, -1)
     assert n_error ~> "just right" &&& 0.3 == 0.3

@@ -29,11 +29,19 @@ defmodule SetTest do
     assert t_c.mf.(5) == 1
   end
 
-  test "update a Set (ANFIS)" do
+  test "update a Set with gradients (ANFIS)" do
     y1 = Set.new(tag: "y1", mf_type: "linear_combination", mf_params: [1, 1, 1])
 
     new_y1 = Set.update(y1, [0.0, 0.0, 0.97], 0.05)
 
     assert new_y1.mf_params == [1.0, 1.0, 0.9515]
+  end
+
+  test "update a Set (ANFIS)" do
+    y1 = Set.new(tag: "y1", mf_type: "linear_combination", mf_params: [1, 1, 1])
+
+    new_y1 = Set.update(y1, [0.0, 0.0, 0.97])
+
+    assert new_y1.mf_params == [0.0, 0.0, 0.97]
   end
 end

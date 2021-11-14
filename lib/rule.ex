@@ -37,6 +37,11 @@ defmodule Flex.Rule do
   end
 
   @doc """
+  Fuzzy AND operator (product).
+  """
+  def tau(a, b), do: a * b
+
+  @doc """
   Fuzzy AND operator.
   """
   def a &&& b, do: min(a, b)
@@ -77,6 +82,7 @@ defmodule Flex.Rule do
   @doc """
   Fuzzy Rules AST (Tuple).
   """
+  def statement({arg1, arg2, "tau"}, args), do: tau(statement(arg1, args), statement(arg2, args))
   def statement({arg1, arg2, "&&&"}, args), do: statement(arg1, args) &&& statement(arg2, args)
   def statement({arg1, arg2, "|||"}, args), do: statement(arg1, args) ||| statement(arg2, args)
 
