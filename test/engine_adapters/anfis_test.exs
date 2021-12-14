@@ -40,16 +40,16 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y1"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
     {:ok, s_pid} =
       System.start_link(
-        antecedents: [x1, x2],
+        antecedent: [x1, x2],
         consequent: output,
         rules: rules,
         engine_type: ANFIS
@@ -100,14 +100,14 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
-    {:ok, s_pid} = System.start_link(antecedents: [x1, x2], consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedent: [x1, x2], consequent: output, rules: rules)
     :ok = System.set_engine_type(s_pid, ANFIS)
 
     refute System.compute(s_pid, [0, 0]) == 0
@@ -160,10 +160,10 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
@@ -176,7 +176,7 @@ defmodule AnfisTest do
 
     {:ok, s_pid} =
       System.start_link(
-        antecedents: [x1, x2],
+        antecedent: [x1, x2],
         consequent: output,
         rules: rules,
         sets_in_rules: sets_in_rules,
@@ -192,9 +192,9 @@ defmodule AnfisTest do
 
     de_do5 = -(target - state.engine_output.crisp_output)
 
-    new_antecedents = ANFIS.backward_pass(de_do5, state, state.engine_output)
+    new_antecedent = ANFIS.backward_pass(de_do5, state, state.engine_output)
 
-    refute state.antecedents == new_antecedents
+    refute state.antecedent == new_antecedent
   end
 
   test "ANFIS XOR forward pass online training only" do
@@ -237,16 +237,16 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
     {:ok, s_pid} =
       System.start_link(
-        antecedents: [x1, x2],
+        antecedent: [x1, x2],
         consequent: output,
         rules: rules,
         learning_rate: 0.5
@@ -339,10 +339,10 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
@@ -355,7 +355,7 @@ defmodule AnfisTest do
 
     {:ok, s_pid} =
       System.start_link(
-        antecedents: [x1, x2],
+        antecedent: [x1, x2],
         consequent: output,
         rules: rules,
         sets_in_rules: sets_in_rules,
@@ -436,10 +436,10 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
@@ -452,7 +452,7 @@ defmodule AnfisTest do
 
     {:ok, s_pid} =
       System.start_link(
-        antecedents: [x1, x2],
+        antecedent: [x1, x2],
         consequent: output,
         rules: rules,
         sets_in_rules: sets_in_rules,
@@ -545,10 +545,10 @@ defmodule AnfisTest do
       (at1 ~> "large" &&& at2 ~> "large") >>> con ~> "y4"
     end
 
-    rule1 = Rule.new(statement: r1, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-    rule2 = Rule.new(statement: r2, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-    rule3 = Rule.new(statement: r3, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-    rule4 = Rule.new(statement: r4, consequent: y.tag, antecedents: [x1.tag, x2.tag])
+    rule1 = Rule.new(statement: r1, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+    rule2 = Rule.new(statement: r2, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+    rule3 = Rule.new(statement: r3, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+    rule4 = Rule.new(statement: r4, consequent: y.tag, antecedent: [x1.tag, x2.tag])
 
     rules = [rule1, rule2, rule3, rule4]
 
@@ -561,7 +561,7 @@ defmodule AnfisTest do
 
     {:ok, s_pid} =
       System.start_link(
-        antecedents: [x1, x2],
+        antecedent: [x1, x2],
         consequent: y,
         rules: rules,
         sets_in_rules: sets_in_rules,

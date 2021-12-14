@@ -13,7 +13,7 @@ defmodule Flex.System do
   defmodule State do
     @moduledoc false
     defstruct rules: nil,
-              antecedents: nil,
+              antecedent: nil,
               consequent: nil,
               engine_type: Mamdani,
               engine_output: %EngineAdapter.State{},
@@ -26,7 +26,7 @@ defmodule Flex.System do
   Fuzzy Logic System state.
   - `:rules` - (list) A list of rules that defines the behavior of the Fuzzy logic systems.
   - `:consequent` - Output variable.
-  - `:antecedents` - a list of the input variables.
+  - `:antecedent` - a list of the input variables.
   - `:engine_type` - defines the inference engine behavior (default: Mamdini).
   - `:sets_in_rules` - list of sets involve in the rules (optional, required by ANFIS).
   - `:learning_rate` - is the speed at which the system parameters are adjusted (ANFIS only).
@@ -34,7 +34,7 @@ defmodule Flex.System do
   """
   @type t :: %Flex.System.State{
           rules: [Flex.Rule.t(), ...],
-          antecedents: [Flex.Variable.t(), ...],
+          antecedent: [Flex.Variable.t(), ...],
           consequent: Flex.Variable.t(),
           engine_type: Mamdani | TakagiSugeno | ANFIS,
           engine_output: EngineAdapter.engine_state(),
@@ -48,7 +48,7 @@ defmodule Flex.System do
 
   The following options are require:
     - `:rules` - Defines the behavior of the system based on a list of rules.
-    - `:antecedents` - (list) Defines the input variables.
+    - `:antecedent` - (list) Defines the input variables.
     - `:consequent` - Defines the output variable.
   """
   def start_link(params, opt \\ []) do
@@ -150,7 +150,7 @@ defmodule Flex.System do
 
   def init(params) do
     rules = Keyword.fetch!(params, :rules)
-    antecedents = Keyword.fetch!(params, :antecedents)
+    antecedent = Keyword.fetch!(params, :antecedent)
     consequent = Keyword.fetch!(params, :consequent)
 
     engine_type = Keyword.get(params, :engine_type, Mamdani)
@@ -161,7 +161,7 @@ defmodule Flex.System do
     {:ok,
      %State{
        rules: rules,
-       antecedents: antecedents,
+       antecedent: antecedent,
        consequent: consequent,
        engine_type: engine_type,
        learning_rate: learning_rate,
@@ -196,9 +196,9 @@ defmodule Flex.System do
       when engine_type == ANFIS do
     de_do5 = -(target - engine_output.crisp_output)
 
-    antecedents = ANFIS.backward_pass(de_do5, state, engine_output)
+    antecedent = ANFIS.backward_pass(de_do5, state, engine_output)
 
-    {:reply, {:ok, de_do5}, %{state | antecedents: antecedents}}
+    {:reply, {:ok, de_do5}, %{state | antecedent: antecedent}}
   end
 
   def handle_call(
@@ -211,9 +211,9 @@ defmodule Flex.System do
 
     consequent = ANFIS.forward_pass(de_do5, state.learning_rate, engine_output)
 
-    antecedents = ANFIS.backward_pass(de_do5, state, engine_output)
+    antecedent = ANFIS.backward_pass(de_do5, state, engine_output)
 
-    {:reply, {:ok, de_do5}, %{state | consequent: consequent, antecedents: antecedents}}
+    {:reply, {:ok, de_do5}, %{state | consequent: consequent, antecedent: antecedent}}
   end
 
   def handle_call(
@@ -222,32 +222,32 @@ defmodule Flex.System do
         %{
           engine_type: engine_type,
           initial_gamma: initial_gamma,
-          antecedents: antecedents,
+          antecedent: antecedent,
           consequent: consequent
         } = state
       )
       when engine_type == ANFIS do
-    {antecedents, consequent} =
-      for _epoch <- 1..epochs, reduce: {antecedents, consequent} do
-        {antecedents, consequent} ->
+    {antecedent, consequent} =
+      for _epoch <- 1..epochs, reduce: {antecedent, consequent} do
+        {antecedent, consequent} ->
           a_matrix =
-            build_matrix_a(inputs, %{state | antecedents: antecedents, consequent: consequent})
+            build_matrix_a(inputs, %{state | antecedent: antecedent, consequent: consequent})
 
           consequent = ANFIS.least_square_estimate(a_matrix, b_matrix, initial_gamma, state)
 
-          antecedents =
-            for {input_vector, target} <- Enum.zip(inputs, b_matrix), reduce: antecedents do
-              antecedents ->
-                back_learning_state = %{state | antecedents: antecedents, consequent: consequent}
+          antecedent =
+            for {input_vector, target} <- Enum.zip(inputs, b_matrix), reduce: antecedent do
+              antecedent ->
+                back_learning_state = %{state | antecedent: antecedent, consequent: consequent}
                 prediction = compute_fis(input_vector, back_learning_state)
                 de_do5 = -(target - prediction.crisp_output)
                 ANFIS.backward_pass(de_do5, back_learning_state, prediction)
             end
 
-          {antecedents, consequent}
+          {antecedent, consequent}
       end
 
-    {:reply, :ok, %{state | antecedents: antecedents, consequent: consequent}}
+    {:reply, :ok, %{state | antecedent: antecedent, consequent: consequent}}
   end
 
   def handle_call({:set_engine_type, type}, _from, state) do
@@ -271,8 +271,8 @@ defmodule Flex.System do
 
   defp compute_fis(input_vector, %{engine_type: engine_type} = state) do
     %EngineAdapter.State{input_vector: input_vector, type: engine_type}
-    |> EngineAdapter.validation(state.antecedents, state.rules, state.consequent)
-    |> EngineAdapter.fuzzification(state.antecedents)
+    |> EngineAdapter.validation(state.antecedent, state.rules, state.consequent)
+    |> EngineAdapter.fuzzification(state.antecedent)
     |> EngineAdapter.inference(state.rules, state.consequent)
     |> EngineAdapter.defuzzification()
   end

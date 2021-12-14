@@ -10,19 +10,19 @@ defmodule Flex.EngineAdapter.Mamdani do
   import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]
 
   @impl EngineAdapter
-  def validation(engine_state, _antecedents, _rules, _consequent),
+  def validation(engine_state, _antecedent, _rules, _consequent),
     do: engine_state
 
   @impl EngineAdapter
-  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedents) do
-    fuzzy_antecedents = EngineAdapter.default_fuzzification(input_vector, antecedents, %{})
-    %{engine_state | fuzzy_antecedents: fuzzy_antecedents}
+  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedent) do
+    fuzzy_antecedent = EngineAdapter.default_fuzzification(input_vector, antecedent, %{})
+    %{engine_state | fuzzy_antecedent: fuzzy_antecedent}
   end
 
   @impl EngineAdapter
-  def inference(%State{fuzzy_antecedents: fuzzy_antecedents} = engine_state, rules, consequent) do
+  def inference(%State{fuzzy_antecedent: fuzzy_antecedent} = engine_state, rules, consequent) do
     fuzzy_consequent =
-      fuzzy_antecedents
+      fuzzy_antecedent
       |> inference_engine(rules, consequent)
       |> output_combination()
 
@@ -34,20 +34,20 @@ defmodule Flex.EngineAdapter.Mamdani do
     %{engine_state | crisp_output: centroid_method(fuzzy_consequent)}
   end
 
-  def inference_engine(_fuzzy_antecedents, [], consequent), do: consequent
+  def inference_engine(_fuzzy_antecedent, [], consequent), do: consequent
 
-  def inference_engine(fuzzy_antecedents, [rule | tail], consequent) do
-    rule_parameters = get_rule_parameters(rule.antecedents, fuzzy_antecedents, []) ++ [consequent]
+  def inference_engine(fuzzy_antecedent, [rule | tail], consequent) do
+    rule_parameters = get_rule_parameters(rule.antecedent, fuzzy_antecedent, []) ++ [consequent]
 
     consequent =
       if is_function(rule.statement) do
         rule.statement.(rule_parameters)
       else
-        args = Map.merge(fuzzy_antecedents, %{consequent.tag => consequent})
+        args = Map.merge(fuzzy_antecedent, %{consequent.tag => consequent})
         statement(rule.statement, args)
       end
 
-    inference_engine(fuzzy_antecedents, tail, consequent)
+    inference_engine(fuzzy_antecedent, tail, consequent)
   end
 
   defp output_combination(cons_var) do

@@ -13,23 +13,23 @@ defmodule Flex.EngineAdapter.ANFIS do
   import MembershipFun, only: [derivative: 4]
 
   @impl EngineAdapter
-  def validation(engine_state, _antecedents, _rules, _consequent),
+  def validation(engine_state, _antecedent, _rules, _consequent),
     do: engine_state
 
   @impl EngineAdapter
-  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedents) do
-    fuzzy_antecedents = EngineAdapter.default_fuzzification(input_vector, antecedents, %{})
-    %{engine_state | fuzzy_antecedents: fuzzy_antecedents}
+  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedent) do
+    fuzzy_antecedent = EngineAdapter.default_fuzzification(input_vector, antecedent, %{})
+    %{engine_state | fuzzy_antecedent: fuzzy_antecedent}
   end
 
   @impl EngineAdapter
   def inference(
-        %State{fuzzy_antecedents: fuzzy_antecedents, input_vector: input_vector} = engine_state,
+        %State{fuzzy_antecedent: fuzzy_antecedent, input_vector: input_vector} = engine_state,
         rules,
         consequent
       ) do
     fuzzy_consequent =
-      fuzzy_antecedents
+      fuzzy_antecedent
       |> inference_engine(rules, consequent)
       |> compute_output_level(input_vector)
 
@@ -41,20 +41,20 @@ defmodule Flex.EngineAdapter.ANFIS do
     %{engine_state | crisp_output: weighted_average_method(fuzzy_consequent)}
   end
 
-  def inference_engine(_fuzzy_antecedents, [], consequent), do: consequent
+  def inference_engine(_fuzzy_antecedent, [], consequent), do: consequent
 
-  def inference_engine(fuzzy_antecedents, [rule | tail], consequent) do
-    rule_parameters = get_rule_parameters(rule.antecedents, fuzzy_antecedents, []) ++ [consequent]
+  def inference_engine(fuzzy_antecedent, [rule | tail], consequent) do
+    rule_parameters = get_rule_parameters(rule.antecedent, fuzzy_antecedent, []) ++ [consequent]
 
     consequent =
       if is_function(rule.statement) do
         rule.statement.(rule_parameters)
       else
-        args = Map.merge(fuzzy_antecedents, %{consequent.tag => consequent})
+        args = Map.merge(fuzzy_antecedent, %{consequent.tag => consequent})
         statement(rule.statement, args)
       end
 
-    inference_engine(fuzzy_antecedents, tail, consequent)
+    inference_engine(fuzzy_antecedent, tail, consequent)
   end
 
   def forward_pass(de_dy, learning_rate, %{
@@ -84,18 +84,18 @@ defmodule Flex.EngineAdapter.ANFIS do
   def backward_pass(
         de_dy,
         %{
-          antecedents: antecedents,
+          antecedent: antecedent,
           sets_in_rules: sets_in_rules,
           learning_rate: learning_rate
         },
         %{
-          fuzzy_antecedents: fuzzy_antecedents,
+          fuzzy_antecedent: fuzzy_antecedent,
           fuzzy_consequent: fuzzy_consequent,
           input_vector: input_vector
         }
       ) do
     ant_list =
-      antecedents
+      antecedent
       |> Enum.map(fn antecedent -> antecedent.tag end)
       |> Enum.with_index()
 
@@ -107,7 +107,7 @@ defmodule Flex.EngineAdapter.ANFIS do
       acc ->
         # Sets loop
         de_da =
-          for fuzzy_set <- fuzzy_antecedents[ant_tag].fuzzy_sets, reduce: [] do
+          for fuzzy_set <- fuzzy_antecedent[ant_tag].fuzzy_sets, reduce: [] do
             acc ->
               # Get dependent rules.
               sets = Enum.map(sets_in_rules, fn sets -> Enum.at(sets, i_index) end)
@@ -117,7 +117,7 @@ defmodule Flex.EngineAdapter.ANFIS do
                     fuzzy_set.tag == set,
                     do: {w_i, w_index}
 
-              muij = fuzzy_antecedents[ant_tag].mf_values[fuzzy_set.tag]
+              muij = fuzzy_antecedent[ant_tag].mf_values[fuzzy_set.tag]
 
               # Premise parameters loop
               de_dag =
@@ -149,7 +149,7 @@ defmodule Flex.EngineAdapter.ANFIS do
               acc ++ [de_dag]
           end
 
-        acc ++ [Variable.update(fuzzy_antecedents[ant_tag], de_da, learning_rate)]
+        acc ++ [Variable.update(fuzzy_antecedent[ant_tag], de_da, learning_rate)]
     end
   end
 

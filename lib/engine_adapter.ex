@@ -6,7 +6,7 @@ defmodule Flex.EngineAdapter do
     @moduledoc false
     defstruct type: nil,
               input_vector: nil,
-              fuzzy_antecedents: nil,
+              fuzzy_antecedent: nil,
               fuzzy_consequent: nil,
               crisp_output: nil
   end
@@ -14,32 +14,32 @@ defmodule Flex.EngineAdapter do
   @typedoc """
   Engine Adapter State.
   - `:type` - defines the inference engine behavior (default: Mamdini).
-  - `:fuzzy_antecedents` - fuzzification output.
+  - `:fuzzy_antecedent` - fuzzification output.
   - `:fuzzy_consequent` - inference output.
   - `:crisp_output` - defuzzification output.
   """
   @type engine_state() :: %Flex.EngineAdapter.State{
           type: Mamdani | TakagiSugeno,
           input_vector: list(),
-          fuzzy_antecedents: map(),
+          fuzzy_antecedent: map(),
           fuzzy_consequent: Flex.Variable.t(),
           crisp_output: integer() | float()
         }
 
-  @type antecedents() :: [Flex.Variable.t(), ...]
+  @type antecedent() :: [Flex.Variable.t(), ...]
   @type rules() :: [Flex.Rule.t(), ...]
   @type consequent() :: Flex.Variable.t()
 
-  @callback validation(engine_state(), antecedents(), rules(), consequent()) :: engine_state()
-  @callback fuzzification(engine_state(), antecedents()) :: engine_state()
+  @callback validation(engine_state(), antecedent(), rules(), consequent()) :: engine_state()
+  @callback fuzzification(engine_state(), antecedent()) :: engine_state()
   @callback inference(engine_state(), rules(), consequent()) :: engine_state()
   @callback defuzzification(engine_state()) :: engine_state()
 
-  def validation(engine_state, antecedents, rules, consequent),
-    do: apply(engine_state.type, :validation, [engine_state, antecedents, rules, consequent])
+  def validation(engine_state, antecedent, rules, consequent),
+    do: apply(engine_state.type, :validation, [engine_state, antecedent, rules, consequent])
 
-  def fuzzification(engine_state, antecedents),
-    do: apply(engine_state.type, :fuzzification, [engine_state, antecedents])
+  def fuzzification(engine_state, antecedent),
+    do: apply(engine_state.type, :fuzzification, [engine_state, antecedent])
 
   def inference(engine_state, rules, consequent),
     do: apply(engine_state.type, :inference, [engine_state, rules, consequent])

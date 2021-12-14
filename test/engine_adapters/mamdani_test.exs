@@ -158,79 +158,79 @@ defmodule MamdaniTest do
     end
 
     rule1 =
-      Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r1, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule2 =
-      Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r2, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule3 =
-      Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r3, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule4 =
-      Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r4, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule5 =
-      Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r5, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule6 =
-      Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r6, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule7 =
-      Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r7, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule8 =
-      Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r8, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule9 =
-      Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r9, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule10 =
-      Rule.new(statement: r10, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r10, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule11 =
-      Rule.new(statement: r11, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r11, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule12 =
-      Rule.new(statement: r12, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r12, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule13 =
-      Rule.new(statement: r13, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r13, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule14 =
-      Rule.new(statement: r14, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r14, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule15 =
-      Rule.new(statement: r15, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r15, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule16 =
-      Rule.new(statement: r16, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r16, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule17 =
-      Rule.new(statement: r17, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r17, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule18 =
-      Rule.new(statement: r18, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r18, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule19 =
-      Rule.new(statement: r19, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r19, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule20 =
-      Rule.new(statement: r20, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r20, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule21 =
-      Rule.new(statement: r21, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r21, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule22 =
-      Rule.new(statement: r22, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r22, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule23 =
-      Rule.new(statement: r23, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r23, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule24 =
-      Rule.new(statement: r24, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r24, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rule25 =
-      Rule.new(statement: r25, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+      Rule.new(statement: r25, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
     rules = [
       rule1,
@@ -261,7 +261,7 @@ defmodule MamdaniTest do
     ]
 
     {:ok, s_pid} =
-      System.start_link(antecedents: [error, dt_error], consequent: output, rules: rules)
+      System.start_link(antecedent: [error, dt_error], consequent: output, rules: rules)
 
     assert System.compute(s_pid, [-15, -0.5]) == 0.5
     assert System.compute(s_pid, [-15, -0.25]) == 0.5
@@ -318,17 +318,17 @@ defmodule MamdaniTest do
     end
 
     rule1 =
-      Rule.new(statement: r1, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
+      Rule.new(statement: r1, consequent: output.tag, antecedent: [n_error.tag, n_dt_error.tag])
 
     rule2 =
-      Rule.new(statement: r2, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
+      Rule.new(statement: r2, consequent: output.tag, antecedent: [n_error.tag, n_dt_error.tag])
 
-    antecedents = %{
+    antecedent = %{
       n_error.tag => n_error,
       n_dt_error.tag => n_dt_error
     }
 
-    output = Mamdani.inference_engine(antecedents, [rule1, rule2], output)
+    output = Mamdani.inference_engine(antecedent, [rule1, rule2], output)
     assert output.mf_values["cool"] == [0]
     assert output.mf_values["heat"] == [0.5]
   end
@@ -365,15 +365,15 @@ defmodule MamdaniTest do
     r4 = fn [at1, con] -> at1 ~> "ps" >>> con ~> "ms" end
     r5 = fn [at1, con] -> at1 ~> "pb" >>> con ~> "ms" end
 
-    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedents: [input.tag])
-    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedents: [input.tag])
-    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedents: [input.tag])
-    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedents: [input.tag])
-    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedents: [input.tag])
+    rule1 = Rule.new(statement: r1, consequent: output.tag, antecedent: [input.tag])
+    rule2 = Rule.new(statement: r2, consequent: output.tag, antecedent: [input.tag])
+    rule3 = Rule.new(statement: r3, consequent: output.tag, antecedent: [input.tag])
+    rule4 = Rule.new(statement: r4, consequent: output.tag, antecedent: [input.tag])
+    rule5 = Rule.new(statement: r5, consequent: output.tag, antecedent: [input.tag])
 
     rules = [rule1, rule2, rule3, rule4, rule5]
 
-    {:ok, s_pid} = System.start_link(antecedents: [input], consequent: output, rules: rules)
+    {:ok, s_pid} = System.start_link(antecedent: [input], consequent: output, rules: rules)
 
     assert System.compute(s_pid, [4.1]) == -375.0
   end

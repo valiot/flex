@@ -6,7 +6,7 @@ defmodule Flex.Rule do
   """
 
   defstruct statement: nil,
-            antecedents: nil,
+            antecedent: nil,
             consequent: nil
 
   @typedoc """
@@ -17,7 +17,7 @@ defmodule Flex.Rule do
   """
   @type t :: %__MODULE__{
           statement: fun() | tuple(),
-          antecedents: [Flex.Variable.t(), ...],
+          antecedent: [Flex.Variable.t(), ...],
           consequent: Flex.Variable.t()
         }
 
@@ -26,14 +26,14 @@ defmodule Flex.Rule do
 
   The following options are require:
     - `:statement` - Defines the rule behavior.
-    - `:antecedents` - (list) Defines the input variables.
+    - `:antecedent` - (list) Defines the input variables.
     - `:consequent` - Defines the output variable.
   """
   def new(params) do
     rule = Keyword.fetch!(params, :statement)
-    antecedents = Keyword.fetch!(params, :antecedents)
+    antecedent = Keyword.fetch!(params, :antecedent)
     consequent = Keyword.fetch!(params, :consequent)
-    %Rule{statement: rule, antecedents: antecedents, consequent: consequent}
+    %Rule{statement: rule, antecedent: antecedent, consequent: consequent}
   end
 
   @doc """
@@ -102,13 +102,13 @@ defmodule Flex.Rule do
   def statement(arg, _args), do: arg
 
   @doc """
-  .Gets the arguments of the Fuzzy Rule
+  Gets the arguments of the Fuzzy Rule
   """
-  def get_rule_parameters([], _antecedents, lt_ant_vars), do: lt_ant_vars
+  def get_rule_parameters([], _antecedent, lt_ant_vars), do: lt_ant_vars
 
-  def get_rule_parameters([tag | tail], antecedents, lt_ant_vars) do
-    f_var = Map.get(antecedents, tag)
+  def get_rule_parameters([tag | tail], antecedent, lt_ant_vars) do
+    f_var = Map.get(antecedent, tag)
     lt_ant_vars = lt_ant_vars ++ [f_var]
-    get_rule_parameters(tail, antecedents, lt_ant_vars)
+    get_rule_parameters(tail, antecedent, lt_ant_vars)
   end
 end

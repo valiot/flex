@@ -1,3 +1,5 @@
+#mix run examples/anfis_demo1.exs
+
 import Flex.Rule
 require Logger
 
@@ -15,18 +17,18 @@ outputs =
   |> CSV.decode!()
   |> Enum.map(fn [_x1, _x2, y] -> String.to_float(y) end)
 
-small = Set.new(tag: "small", mf_type: "gaussian", mf_params: [0, 1, 1])
-mid = Set.new(tag: "mid", mf_type: "gaussian", mf_params: [-1, 2, 1])
-large = Set.new(tag: "large", mf_type: "gaussian", mf_params: [-4, 10, 1])
-extra_large = Set.new(tag: "extra_large", mf_type: "gaussian", mf_params: [-7, 7, 1])
+small = Set.new(tag: "small", mf_type: "bell", mf_params: [0, 1.2, 1.2])
+mid = Set.new(tag: "mid", mf_type: "bell", mf_params: [-1, 1.6, 2.4])
+large = Set.new(tag: "large", mf_type: "bell", mf_params: [-4, 1.1, 12])
+extra_large = Set.new(tag: "extra_large", mf_type: "bell", mf_params: [-7, 1.4, 7.8])
 
 fuzzy_sets = [small, mid, large, extra_large]
 x1 = Variable.new(tag: "x1", fuzzy_sets: fuzzy_sets, type: :antecedent, range: -4..4)
 
-small = Set.new(tag: "small", mf_type: "gaussian", mf_params: [1, 2, 1])
-mid = Set.new(tag: "mid", mf_type: "gaussian", mf_params: [2, 3, 1])
-large = Set.new(tag: "large", mf_type: "gaussian", mf_params: [-2, 10, 1])
-extra_large = Set.new(tag: "extra_large", mf_type: "gaussian", mf_params: [-10.5, 5, 1])
+small = Set.new(tag: "small", mf_type: "bell", mf_params: [1, 1.4, 2.3])
+mid = Set.new(tag: "mid", mf_type: "bell", mf_params: [2, 1.3, 3.5])
+large = Set.new(tag: "large", mf_type: "bell", mf_params: [-2, 15, 11.3])
+extra_large = Set.new(tag: "extra_large", mf_type: "bell", mf_params: [-10.5, 1.3, 6])
 
 fuzzy_sets = [small, mid, large, extra_large]
 x2 = Variable.new(tag: "x2", fuzzy_sets: fuzzy_sets, type: :antecedent, range: -1..6)
@@ -116,22 +118,22 @@ r16 = fn [at1, at2, con] ->
   tau(at1 ~> "extra_large", at2 ~> "extra_large") >>> con ~> "y16"
 end
 
-rule1 = Rule.new(statement: r1, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule2 = Rule.new(statement: r2, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule3 = Rule.new(statement: r3, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule4 = Rule.new(statement: r4, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule5 = Rule.new(statement: r5, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule6 = Rule.new(statement: r6, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule7 = Rule.new(statement: r7, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule8 = Rule.new(statement: r8, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule9 = Rule.new(statement: r9, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule10 = Rule.new(statement: r10, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule11 = Rule.new(statement: r11, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule12 = Rule.new(statement: r12, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule13 = Rule.new(statement: r13, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule14 = Rule.new(statement: r14, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule15 = Rule.new(statement: r15, consequent: y.tag, antecedents: [x1.tag, x2.tag])
-rule16 = Rule.new(statement: r16, consequent: y.tag, antecedents: [x1.tag, x2.tag])
+rule1 = Rule.new(statement: r1, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule2 = Rule.new(statement: r2, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule3 = Rule.new(statement: r3, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule4 = Rule.new(statement: r4, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule5 = Rule.new(statement: r5, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule6 = Rule.new(statement: r6, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule7 = Rule.new(statement: r7, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule8 = Rule.new(statement: r8, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule9 = Rule.new(statement: r9, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule10 = Rule.new(statement: r10, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule11 = Rule.new(statement: r11, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule12 = Rule.new(statement: r12, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule13 = Rule.new(statement: r13, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule14 = Rule.new(statement: r14, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule15 = Rule.new(statement: r15, consequent: y.tag, antecedent: [x1.tag, x2.tag])
+rule16 = Rule.new(statement: r16, consequent: y.tag, antecedent: [x1.tag, x2.tag])
 
 rules = [
   rule1,
@@ -174,14 +176,14 @@ sets_in_rules = [
 {:ok, s_pid} =
   System.start_link(
     engine_type: ANFIS,
-    antecedents: [x1, x2],
+    antecedent: [x1, x2],
     consequent: y,
     rules: rules,
     sets_in_rules: sets_in_rules,
-    learning_rate: 0.5
+    learning_rate: 1.75
   )
 
-System.hybrid_offline_learning(s_pid, inputs, outputs, 20)
+System.hybrid_offline_learning(s_pid, inputs, outputs, 100)
 
 predicted = Enum.map(inputs, fn(input) -> System.compute(s_pid, input) end)
 
@@ -190,10 +192,11 @@ desired_dataset = for {index, desired_data} <- Enum.zip(1..121, outputs), do: [i
 
 {:ok, _cmd} = Gnuplot.plot([
     [:set, :title, "Prediction vs Real"],
+    [:set, :grid],
     [:set, :key, :left, :top],
     Gnuplot.plots([
         ["-", :title, "Real", :with, :line],
-        ["-", :title, "Prediction1", :with, :line],
+        ["-", :title, "Prediction", :with, :line],
       ])
     ],
     [
