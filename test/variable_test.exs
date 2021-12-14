@@ -1,6 +1,6 @@
 defmodule VariableTest do
   use ExUnit.Case
-  alias Flex.{Variable, Set}
+  alias Flex.{Set, Variable}
   doctest Flex
 
   test "fuzzification test" do
@@ -25,5 +25,35 @@ defmodule VariableTest do
     error = Variable.new(tag: "error", fuzzy_sets: fuzzy_sets, type: :consequent, range: 1..2)
     n_error = Variable.fuzzification(error, -1)
     assert n_error == :error
+  end
+
+  test "Update a variable (ANFIS)" do
+    # Random Initialization
+    y1 = Set.new(tag: "y1", mf_type: "linear_combination", mf_params: [1, 1, 1])
+    y2 = Set.new(tag: "y2", mf_type: "linear_combination", mf_params: [1, 1, 1])
+    y3 = Set.new(tag: "y3", mf_type: "linear_combination", mf_params: [1, 1, 1])
+    y4 = Set.new(tag: "y4", mf_type: "linear_combination", mf_params: [1, 1, 1])
+
+    fuzzy_sets = [y1, y2, y3, y4]
+    output = Variable.new(tag: "y", fuzzy_sets: fuzzy_sets, type: :consequent, range: -10..10)
+
+    gradients = [
+      [0.0, 0.0, 0.97],
+      [0.0, 0.0, 0.01],
+      [0.0, 0.0, 0.01],
+      [0.0, 0.0, 0.01]
+    ]
+
+    desired_mf_params = [
+      [1.0, 1.0, 0.9515],
+      [1.0, 1.0, 0.9995],
+      [1.0, 1.0, 0.9995],
+      [1.0, 1.0, 0.9995]
+    ]
+
+    new_variable = Variable.update(output, gradients, 0.05)
+
+    for {fuzzy_set, desired_mf_param} <- Enum.zip(new_variable.fuzzy_sets, desired_mf_params),
+        do: assert(fuzzy_set.mf_params == desired_mf_param)
   end
 end

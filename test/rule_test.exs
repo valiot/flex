@@ -1,7 +1,7 @@
 defmodule RuleTest do
   use ExUnit.Case
   import Flex.Rule
-  alias Flex.{Set, Variable, Rule}
+  alias Flex.{Rule, Set, Variable}
   doctest Flex
 
   setup do
@@ -33,6 +33,12 @@ defmodule RuleTest do
     %{ant: [error, dt_error], cons: output}
   end
 
+  test "tau 'fuzzy and (product)' operator", %{ant: [error, _dt_error], cons: _output} do
+    n_error = Variable.fuzzification(error, -1)
+    assert n_error ~> "just right" == 0.5
+    assert tau(n_error ~> "just right", 0.3) == 0.15
+  end
+
   test "&&& 'fuzzy and' operator", %{ant: [error, _dt_error], cons: _output} do
     n_error = Variable.fuzzification(error, -1)
     assert n_error ~> "just right" &&& 0.3 == 0.3
@@ -49,7 +55,7 @@ defmodule RuleTest do
   end
 
   test " ~> 'is' operator for consequent vars", %{ant: [_error, _dt_error], cons: output} do
-    output = %{output | tmp: 0.75}
+    output = %{output | rule_output: 0.75}
     n_output = output ~> "just right"
     assert n_output.mf_values["just right"] == [0.75]
     n_output = n_output ~> "just right"
@@ -63,7 +69,7 @@ defmodule RuleTest do
   end
 
   test " >>> 'then' operator for consequent vars", %{ant: [_error, _dt_error], cons: output} do
-    d_output = %{output | tmp: 0.75}
+    d_output = %{output | rule_output: 0.75}
     assert 0.75 >>> output == d_output
   end
 
@@ -100,9 +106,9 @@ defmodule RuleTest do
     end
 
     rule1 =
-      Rule.new(statement: r1, consequent: output.tag, antecedents: [n_error.tag, n_dt_error.tag])
+      Rule.new(statement: r1, consequent: output.tag, antecedent: [n_error.tag, n_dt_error.tag])
 
-    assert rule1.antecedents == ["error", "dt_error"]
+    assert rule1.antecedent == ["error", "dt_error"]
     assert rule1.consequent == "output"
 
     output = rule1.statement.([n_error, n_dt_error, output])

@@ -87,28 +87,25 @@ defmodule Flex.MembershipFun do
   def trapezoidal([a, b, c, d]) do
     ctr = (c - b) / 2
 
-    mu = fn x ->
-      cond do
-        # Left side
-        a != b and a < x and x < b ->
-          (x - a) / (b - a)
-
-        # Medium
-        b != c and b <= x and x <= c ->
-          1
-
-        # Right side
-        c != d and c < x and x < d ->
-          (c - x) / (c - d)
-
-        # Catch all
-        true ->
-          0
-      end
-    end
+    mu = fn x -> trapezoidal_func(x, a, b, c, d) end
 
     {mu, ctr}
   end
+
+  # Left side
+  defp trapezoidal_func(x, a, b, _c, _d) when a != b and a < x and x < b,
+    do: (x - a) / (b - a)
+
+  # Medium
+  defp trapezoidal_func(x, _a, b, c, _d) when b != c and b <= x and x <= c,
+    do: 1
+
+  # Right side
+  defp trapezoidal_func(x, _a, _b, c, d) when c != d and c < x and x < d,
+    do: (c - x) / (c - d)
+
+  # Catch All
+  defp trapezoidal_func(_x, _a, _b, _c, _d), do: 0
 
   @doc """
   Gaussian membership function.
@@ -130,6 +127,23 @@ defmodule Flex.MembershipFun do
   end
 
   def gaussian([_c, s, _m]), do: raise(ArgumentError, "Bad standard deviation: #{s}")
+
+  @doc """
+  Gaussian membership derivatived function.
+    * `m` - (number) Mean,
+    * `s` - (number) Standard deviation, it must not be equal to 0.
+    * `f` - (number) Fuzzification Factor.
+    * `mu` - (number) Last membership function value.
+  """
+  # Respect to the Mean (Center)
+  def d_gaussian([m, s, _f], x, mu, 0) when s != 0,
+    do: (x - m) * mu / pow(s, 2)
+
+  # Respect to the Slope
+  def d_gaussian([m, s, _f], x, mu, 1) when s != 0,
+    do: pow(x - m, 2) * mu / pow(s, 3)
+
+  def d_gaussian([_m, _s, _f], _x, _mu, _arg_index), do: 0
 
   @doc """
   Generalized Bell membership function.
@@ -154,6 +168,36 @@ defmodule Flex.MembershipFun do
   end
 
   def gbell([_c, _s, b]), do: raise(ArgumentError, "Bad width of the curve: #{b}")
+
+  @doc """
+  Generalized Bell membership  derivatived function.
+    * `c` - (number) Center.
+    * `s` - (number) Slope.
+    * `b` - (number) The width of the curve, it must not be equal to 0.
+
+  Definition of Generalized Bell function is:
+        y(x) = 1 / (1 + |((x - c) / b)|^(2 * s))
+  """
+  # Respect to the Mean (Center)
+  def d_gbell([c, s, b], x, mu, 0) when b != 0 and x != c,
+    do: 2 * s * mu * (1 - mu) / (x - c)
+
+  def d_gbell([_c, _s, b], _x, _mu, 0) when b != 0, do: 0
+
+  # Respect to the Slope
+  def d_gbell([c, _s, b], x, mu, 1) when b != 0 and x != c,
+    do: -2 * log(abs((x - c) / b)) * mu * (1 - mu)
+
+  def d_gbell([_c, _s, b], _x, _mu, 1) when b != 0, do: 0
+
+  # Respect to the Width
+  def d_gbell([c, s, b], x, mu, 2) when b != 0 and x != c,
+    do: 2 * s * mu * (1 - mu) / b
+
+  def d_gbell([_c, _s, b], _x, _mu, 2) when b != 0, do: 0
+
+  def d_gbell([_c, _s, b], _x, _mu, _darg_index),
+    do: raise(ArgumentError, "Bad width of the curve: #{b}")
 
   @doc """
   Sigmoidal membership function.
@@ -246,39 +290,31 @@ defmodule Flex.MembershipFun do
   def pi_shaped([a, b, c, d]) when a <= b and b <= c and c <= d do
     center = (a + d) / 2
 
-    mu = fn x ->
-      cond do
-        x <= a ->
-          0
-
-        a <= x and x <= (a + b) / 2 ->
-          2 * pow((x - a) / (b - a), 2)
-
-        (a + b) / 2 <= x and x <= b ->
-          1 - 2 * pow((x - b) / (b - a), 2)
-
-        b <= x and x <= c ->
-          1
-
-        c <= x and x <= (c + d) / 2 ->
-          1 - 2 * pow((x - c) / (d - c), 2)
-
-        (c + d) / 2 <= x and x <= d ->
-          2 * pow((x - d) / (d - c), 2)
-
-        x >= d ->
-          0
-
-        # Catch all
-        true ->
-          0
-      end
-    end
+    mu = fn x -> pi_shaped_func(x, a, b, c, d) end
 
     {mu, center}
   end
 
   def pi_shaped([_a, _b, _]), do: raise(ArgumentError, "a <= b <= c <= d is required.")
+
+  defp pi_shaped_func(x, a, _b, _c, _d) when x <= a, do: 0
+
+  defp pi_shaped_func(x, a, b, _c, _d) when a <= x and x <= (a + b) / 2,
+    do: 2 * pow((x - a) / (b - a), 2)
+
+  defp pi_shaped_func(x, a, b, _c, _d) when (a + b) / 2 <= x and x <= b,
+    do: 1 - 2 * pow((x - b) / (b - a), 2)
+
+  defp pi_shaped_func(x, _a, b, c, _d) when b <= x and x <= c, do: 1
+
+  defp pi_shaped_func(x, _a, _b, c, d) when c <= x and x <= (c + d) / 2,
+    do: 1 - 2 * pow((x - c) / (d - c), 2)
+
+  defp pi_shaped_func(x, _a, _b, c, d) when (c + d) / 2 <= x and x <= d,
+    do: 2 * pow((x - d) / (d - c), 2)
+
+  defp pi_shaped_func(x, _a, _b, _c, d) when x >= d, do: 0
+  defp pi_shaped_func(_x, _a, _b, _c, _d), do: 0
 
   @doc """
   For Takagi-Sugeno-Kang fuzzy inference, uses this output membership functions that are either constant
@@ -304,14 +340,22 @@ defmodule Flex.MembershipFun do
       cond do
         # Invalid data type
         not is_list(input_vector) ->
-          raise(ArgumentError, "Invalid input_vector data type: #{inspect(input_vector)}, it must be a list.")
+          raise(
+            ArgumentError,
+            "Invalid input_vector data type: #{inspect(input_vector)}, it must be a list."
+          )
+
         # Valid input_vector and coefficients.
         length(input_vector) + 1 == length(coefficients) ->
           {coefficients, [constant]} = Enum.split(coefficients, -1)
           linear_combination(input_vector, coefficients) + constant
+
         # Catch all
         true ->
-          raise(ArgumentError, "Invalid size between the coefficients: #{inspect(coefficients)} and the input_vector: #{inspect(input_vector)} (length(input_vector) + 1 == length(coefficients))")
+          raise(
+            ArgumentError,
+            "Invalid size between the coefficients: #{inspect(coefficients)} and the input_vector: #{inspect(input_vector)} (length(input_vector) + 1 == length(coefficients))"
+          )
       end
     end
 
@@ -321,6 +365,26 @@ defmodule Flex.MembershipFun do
   defp linear_combination(input_vector, coefficients) do
     input_vector
     |> Enum.zip(coefficients)
-    |> Enum.reduce(0, fn {input, coefficient}, acc -> acc + (input * coefficient) end)
+    |> Enum.reduce(0, fn {input, coefficient}, acc -> acc + input * coefficient end)
+  end
+
+  @doc """
+  An interface to execute derivatives of membership functions, where,
+    * `z_i` - is the i'th rule output.
+    * `x, y` - are the values of input 1 and input 2, respectively.
+    * `a_i, b_i, and c_i` - are constant coefficients of the i'th rule output.
+    For a zero-order Takagi-Sugeno system, z_i is a constant (a = b = 0).
+  """
+  def derivative(fuzzy_set, input, membership_grade, darg_index) do
+    case fuzzy_set.mf_type do
+      "bell" ->
+        d_gbell(fuzzy_set.mf_params, input, membership_grade, darg_index)
+
+      "gaussian" ->
+        d_gaussian(fuzzy_set.mf_params, input, membership_grade, darg_index)
+
+      _ ->
+        raise("Derivative #{inspect(fuzzy_set.mf_type)} not supported.")
+    end
   end
 end

@@ -4,29 +4,29 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
   The defuzzification process for a Sugeno system is more computationally efficient compared to that of a Mamdani system,
   since it uses a weighted average or weighted sum of a few data points rather than compute a centroid of a two-dimensional area.
   """
-  alias Flex.{Variable, EngineAdapter, EngineAdapter.State}
+  alias Flex.{EngineAdapter, EngineAdapter.State, Variable}
   @behaviour EngineAdapter
 
   import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]
 
   @impl EngineAdapter
-  def validation(engine_state, _antecedents, _rules, _consequent),
+  def validation(engine_state, _antecedent, _rules, _consequent),
     do: engine_state
 
   @impl EngineAdapter
-  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedents) do
-    fuzzy_antecedents = EngineAdapter.default_fuzzification(input_vector, antecedents, %{})
-    %{engine_state | fuzzy_antecedents: fuzzy_antecedents}
+  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedent) do
+    fuzzy_antecedent = EngineAdapter.default_fuzzification(input_vector, antecedent, %{})
+    %{engine_state | fuzzy_antecedent: fuzzy_antecedent}
   end
 
   @impl EngineAdapter
   def inference(
-        %State{fuzzy_antecedents: fuzzy_antecedents, input_vector: input_vector} = engine_state,
+        %State{fuzzy_antecedent: fuzzy_antecedent, input_vector: input_vector} = engine_state,
         rules,
         consequent
       ) do
     fuzzy_consequent =
-      fuzzy_antecedents
+      fuzzy_antecedent
       |> inference_engine(rules, consequent)
       |> compute_output_level(input_vector)
 
@@ -38,27 +38,34 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
     %{engine_state | crisp_output: weighted_average_method(fuzzy_consequent)}
   end
 
-  def inference_engine(_fuzzy_antecedents, [], consequent), do: consequent
+  def inference_engine(_fuzzy_antecedent, [], consequent), do: consequent
 
-  def inference_engine(fuzzy_antecedents, [rule | tail], consequent) do
-    rule_parameters = get_rule_parameters(rule.antecedents, fuzzy_antecedents, []) ++ [consequent]
+  def inference_engine(fuzzy_antecedent, [rule | tail], consequent) do
+    rule_parameters = get_rule_parameters(rule.antecedent, fuzzy_antecedent, []) ++ [consequent]
 
     consequent =
       if is_function(rule.statement) do
         rule.statement.(rule_parameters)
       else
-        args = Map.merge(fuzzy_antecedents, %{consequent.tag => consequent})
+        args = Map.merge(fuzzy_antecedent, %{consequent.tag => consequent})
         statement(rule.statement, args)
       end
 
-    inference_engine(fuzzy_antecedents, tail, consequent)
+    inference_engine(fuzzy_antecedent, tail, consequent)
   end
 
   defp compute_output_level(cons_var, input_vector) do
     rules_output =
-      Enum.map(cons_var.fuzzy_sets, fn output_fuzzy_set -> output_fuzzy_set.mf.(input_vector) end)
+      Enum.reduce(cons_var.fuzzy_sets, [], fn output_fuzzy_set, acc ->
+        output_value =
+          for _ <- cons_var.mf_values[output_fuzzy_set.tag], into: [] do
+            output_fuzzy_set.mf.(input_vector)
+          end
 
-    %{cons_var | tmp: rules_output}
+        acc ++ output_value
+      end)
+
+    %{cons_var | rule_output: rules_output}
   end
 
   @doc """
@@ -68,7 +75,7 @@ defmodule Flex.EngineAdapter.TakagiSugeno do
   def weighted_average_method(%Variable{type: type} = fuzzy_var) when type == :consequent do
     fuzzy_var
     |> build_fuzzy_sets_strength_list()
-    |> fuzzy_to_crisp(fuzzy_var.tmp, 0, 0)
+    |> fuzzy_to_crisp(fuzzy_var.rule_output, 0, 0)
   end
 
   defp build_fuzzy_sets_strength_list(%Variable{fuzzy_sets: fuzzy_sets, mf_values: mf_values}) do

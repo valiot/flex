@@ -21,6 +21,7 @@ The goal of FLex is to easily design and efficiently operate fuzzy logic control
     * [Variables](#variables)
     * [Rules](#rules)
     * [System](#system)
+    * [ANFIS](#anfis)
 
 * [Documentation](#documentation)
 
@@ -32,7 +33,7 @@ The goal of FLex is to easily design and efficiently operate fuzzy logic control
 
 ## Features
 
-The following list is the current supported backend for each component of the FLS.
+The following list is the current supported backend for each component of the FLS:
 
 - Linguistic Rules:
   - Lambda function syntax
@@ -43,16 +44,47 @@ The following list is the current supported backend for each component of the FL
   - Trapezoidal
   - Saturation
   - Shoulder
+  - Gauss
+  - Generalized Bell
+  - Sigmoid
+  - Z-shaped
+  - S-shaped
+  - Pi-shaped
+  - Linear Combination (Takagi-Sugeno, ANFIS only)
 
-- Inference:
-  - Min
+- Fuzzy Inference Systems:
+  - Mamdani:
+    - Inference:
+      - Min
 
-- Output Combination:
-  - Root-sum-square
+    - Output Combination:
+      - Root-sum-square
 
-- Defuzzification:
-  - Centroid
+    - Defuzzification:
+      - Centroid
 
+  - Takagi-Sugeno:
+    - Inference:  
+      - Max
+      - Product
+      
+    - Defuzzification:
+      - Weighted average
+
+  - ANFIS:
+    - Inference:  
+      - Max
+      - Product
+      
+    - Defuzzification:
+      - Weighted average
+
+    - Optimization Method:
+      - Backpropagation.
+      - Hybrid (Backpropagation, LSE).
+
+
+**NOTE:** All systems are single output.
 
 ## Installation
 
@@ -160,15 +192,15 @@ Currently there are two types of syntax for defining the rules `statement`:
     {{{{"error", "too cold", "~>"}, {"dt_error", "getting hotter", "~>"}, "&&&"}, "output",
       ">>>"}, "cool", "~>"}
 
-  rule1 = Flex.Rule.new(statement: r1, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule2 = Flex.Rule.new(statement: r2, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule3 = Flex.Rule.new(statement: r3, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule4 = Flex.Rule.new(statement: r4, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule5 = Flex.Rule.new(statement: r5, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule6 = Flex.Rule.new(statement: r6, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule7 = Flex.Rule.new(statement: r7, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule8 = Flex.Rule.new(statement: r8, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
-  rule9 = Flex.Rule.new(statement: r9, consequent: output.tag, antecedents: [error.tag, dt_error.tag])
+  rule1 = Flex.Rule.new(statement: r1, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule2 = Flex.Rule.new(statement: r2, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule3 = Flex.Rule.new(statement: r3, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule4 = Flex.Rule.new(statement: r4, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule5 = Flex.Rule.new(statement: r5, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule6 = Flex.Rule.new(statement: r6, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule7 = Flex.Rule.new(statement: r7, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule8 = Flex.Rule.new(statement: r8, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
+  rule9 = Flex.Rule.new(statement: r9, consequent: output.tag, antecedent: [error.tag, dt_error.tag])
 
   rules = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
 
@@ -180,9 +212,10 @@ Currently there are two types of syntax for defining the rules `statement`:
   - `:rules` - Defines the behavior of the system based on a list of rules.
   - `:antecedent` - (list) Defines the input variables.
   - `:consequent` - Defines the output variable.
+  - `:engine_type` - Defines the inference engine behavior (default: Mamdini).
 
 ```elixir
-  {:ok, s_pid} = Flex.System.start_link(antecedents: [error, dt_error], consequent: output, rules: rules)
+  {:ok, s_pid} = Flex.System.start_link(antecedent: [error, dt_error], consequent: output, rules: rules)
 ```
 
 **Step 5:** Fit the FLS with a input vector using `Flex.System.compute/2`.
@@ -192,6 +225,9 @@ Currently there are two types of syntax for defining the rules `statement`:
 ```
 
 In `test/system_test.exs` there is an example of use, that is based on this [example](http://robotics.ee.uwa.edu.au/courses/faulttolerant/notes/FT5.pdf).
+
+### ANFIS
+An adaptive network-based fuzzy inference system (ANFIS) is a kind of artificial neural network that is based on Takagi–Sugeno fuzzy inference system, this implementation use backpropagation, only Gaussian & Generalized Bell Membership functions are allowed. In `examples/anfis_demo1.exs` there is an example of use.
 
 ## Documentation
 The docs can be found at [https://hexdocs.pm/flex](https://hexdocs.pm/flex).

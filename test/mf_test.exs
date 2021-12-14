@@ -1,7 +1,8 @@
 defmodule MfTest do
   use ExUnit.Case
-  alias Flex.MembershipFun
+  alias Flex.{MembershipFun, Set}
   import Float
+  import :math, only: [log: 1]
   doctest Flex
 
   test "Triangle mf" do
@@ -58,6 +59,28 @@ defmodule MfTest do
     assert mf.(25) |> round(3) == 0.001
   end
 
+  test "Gaussian mdf" do
+    m = 0
+    s = 2
+    f = 1
+
+    small = Set.new(tag: "small", mf_type: "gaussian", mf_params: [m, s, f])
+
+    x = 1
+    mu = small.mf.(x)
+
+    assert MembershipFun.derivative(small, x, mu, 0) == 0.22062422564614886
+    assert MembershipFun.derivative(small, x, mu, 1) == 0.11031211282307443
+    assert MembershipFun.derivative(small, x, mu, 2) == 0
+
+    x = 2
+    mu = small.mf.(x)
+
+    assert MembershipFun.derivative(small, x, mu, 0) == 0.3032653298563167
+    assert MembershipFun.derivative(small, x, mu, 1) == 0.3032653298563167
+    assert MembershipFun.derivative(small, x, mu, 2) == 0
+  end
+
   test "Generalized Bell mf" do
     {mf, c} = MembershipFun.gbell([50, 4, 8])
     assert c == 50
@@ -68,6 +91,36 @@ defmodule MfTest do
     assert mf.(60) |> round(3) == 0.144
     assert mf.(70) |> round(3) == 0.001
     assert mf.(80) |> round(3) == 0.000
+  end
+
+  test "Generalized Bell mdf" do
+    c = 0
+    s = 1
+    b = 0.1
+
+    small = Set.new(tag: "small", mf_type: "bell", mf_params: [c, s, b])
+
+    x = 1
+    a = b
+    b = s
+    mu = miu(x, a, b, c)
+
+    assert dmui_dcij(x, a, b, c) |> Float.round(12) ==
+             MembershipFun.derivative(small, x, mu, 0) |> Float.round(12)
+
+    assert dmui_dbij(x, a, b, c) |> Float.round(12) ==
+             MembershipFun.derivative(small, x, mu, 1) |> Float.round(12)
+
+    assert dmui_daij(x, a, b, c) |> Float.round(12) ==
+             MembershipFun.derivative(small, x, mu, 2) |> Float.round(12)
+
+    x = 0
+    a = b
+    b = s
+    mu = miu(x, a, b, c)
+    assert dmui_dcij(x, a, b, c) == MembershipFun.derivative(small, x, mu, 0)
+    assert dmui_dbij(x, a, b, c) == MembershipFun.derivative(small, x, mu, 1)
+    assert dmui_daij(x, a, b, c) == MembershipFun.derivative(small, x, mu, 2)
   end
 
   test "Sigmoidal mf" do
@@ -139,12 +192,32 @@ defmodule MfTest do
     assert mf.([1, 2, 3]) == 100
   end
 
-  test " Linear combination mf exceptions" do
+  test "Linear combination mf exceptions" do
     {mf, c} = MembershipFun.linear_combination([1, 2, 2, 100])
     assert c == nil
-    assert_raise ArgumentError, "Invalid input_vector data type: 30, it must be a list.", fn ->  mf.(30) end
+
+    assert_raise ArgumentError, "Invalid input_vector data type: 30, it must be a list.", fn ->
+      mf.(30)
+    end
+
     desired_exceptions =
       "Invalid size between the coefficients: [1, 2, 2, 100] and the input_vector: [1, 2] (length(input_vector) + 1 == length(coefficients))"
-    assert_raise ArgumentError, desired_exceptions, fn ->  mf.([1, 2]) end
+
+    assert_raise ArgumentError, desired_exceptions, fn -> mf.([1, 2]) end
   end
+
+  def dmui_daij(x, a, b, c), do: 2 * b * pow(fi(x, a, c), 2 * b) * pow(miu(x, a, b, c), 2) / a
+
+  def dmui_dbij(x, _a, _b, c) when x == c, do: 0
+
+  def dmui_dbij(x, a, b, c),
+    do: -2 * pow(fi(x, a, c), 2 * b) * pow(miu(x, a, b, c), 2) * log(fi(x, a, c))
+
+  def dmui_dcij(x, _a, _b, c) when x == c, do: 0
+
+  def dmui_dcij(x, a, b, c),
+    do: 2 * b * pow(fi(x, a, c), 2 * b) * pow(miu(x, a, b, c), 2) / (x - c)
+
+  def fi(x, a, c), do: (x - c) / a
+  def miu(x, a, b, c), do: 1 / (1 + pow(fi(x, a, c), 2 * b))
 end

@@ -6,7 +6,7 @@ defmodule Flex.Rule do
   """
 
   defstruct statement: nil,
-            antecedents: nil,
+            antecedent: nil,
             consequent: nil
 
   @typedoc """
@@ -17,7 +17,7 @@ defmodule Flex.Rule do
   """
   @type t :: %__MODULE__{
           statement: fun() | tuple(),
-          antecedents: [Flex.Variable.t(), ...],
+          antecedent: [Flex.Variable.t(), ...],
           consequent: Flex.Variable.t()
         }
 
@@ -26,15 +26,20 @@ defmodule Flex.Rule do
 
   The following options are require:
     - `:statement` - Defines the rule behavior.
-    - `:antecedents` - (list) Defines the input variables.
+    - `:antecedent` - (list) Defines the input variables.
     - `:consequent` - Defines the output variable.
   """
   def new(params) do
     rule = Keyword.fetch!(params, :statement)
-    antecedents = Keyword.fetch!(params, :antecedents)
+    antecedent = Keyword.fetch!(params, :antecedent)
     consequent = Keyword.fetch!(params, :consequent)
-    %Rule{statement: rule, antecedents: antecedents, consequent: consequent}
+    %Rule{statement: rule, antecedent: antecedent, consequent: consequent}
   end
+
+  @doc """
+  Fuzzy AND operator (product).
+  """
+  def tau(a, b), do: a * b
 
   @doc """
   Fuzzy AND operator.
@@ -55,7 +60,7 @@ defmodule Flex.Rule do
         raise("only the consequent variable can use the THEN operation")
 
       :consequent ->
-        %{b | tmp: a}
+        %{b | rule_output: a}
     end
   end
 
@@ -68,7 +73,7 @@ defmodule Flex.Rule do
         a.mf_values[b]
 
       :consequent ->
-        new_values = Map.get(a.mf_values, b, []) ++ [a.tmp]
+        new_values = Map.get(a.mf_values, b, []) ++ [a.rule_output]
         mf_values = Map.put(a.mf_values, b, new_values)
         %{a | mf_values: mf_values}
     end
@@ -77,6 +82,7 @@ defmodule Flex.Rule do
   @doc """
   Fuzzy Rules AST (Tuple).
   """
+  def statement({arg1, arg2, "tau"}, args), do: tau(statement(arg1, args), statement(arg2, args))
   def statement({arg1, arg2, "&&&"}, args), do: statement(arg1, args) &&& statement(arg2, args)
   def statement({arg1, arg2, "|||"}, args), do: statement(arg1, args) ||| statement(arg2, args)
 
@@ -96,13 +102,13 @@ defmodule Flex.Rule do
   def statement(arg, _args), do: arg
 
   @doc """
-  .Gets the arguments of the Fuzzy Rule
+  Gets the arguments of the Fuzzy Rule
   """
-  def get_rule_parameters([], _antecedents, lt_ant_vars), do: lt_ant_vars
+  def get_rule_parameters([], _antecedent, lt_ant_vars), do: lt_ant_vars
 
-  def get_rule_parameters([tag | tail], antecedents, lt_ant_vars) do
-    f_var = Map.get(antecedents, tag)
+  def get_rule_parameters([tag | tail], antecedent, lt_ant_vars) do
+    f_var = Map.get(antecedent, tag)
     lt_ant_vars = lt_ant_vars ++ [f_var]
-    get_rule_parameters(tail, antecedents, lt_ant_vars)
+    get_rule_parameters(tail, antecedent, lt_ant_vars)
   end
 end

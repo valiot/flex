@@ -4,25 +4,25 @@ defmodule Flex.EngineAdapter.Mamdani do
   In a Mamdani system, the output of each rule is a fuzzy set. Since Mamdani systems have more intuitive and easier to understand rule bases,
   they are well-suited to expert system applications where the rules are created from human expert knowledge, such as medical diagnostics.
   """
-  alias Flex.{Variable, EngineAdapter, EngineAdapter.State}
+  alias Flex.{EngineAdapter, EngineAdapter.State, Variable}
   @behaviour EngineAdapter
 
   import Flex.Rule, only: [statement: 2, get_rule_parameters: 3]
 
   @impl EngineAdapter
-  def validation(engine_state, _antecedents, _rules, _consequent),
+  def validation(engine_state, _antecedent, _rules, _consequent),
     do: engine_state
 
   @impl EngineAdapter
-  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedents) do
-    fuzzy_antecedents = EngineAdapter.default_fuzzification(input_vector, antecedents, %{})
-    %{engine_state | fuzzy_antecedents: fuzzy_antecedents}
+  def fuzzification(%State{input_vector: input_vector} = engine_state, antecedent) do
+    fuzzy_antecedent = EngineAdapter.default_fuzzification(input_vector, antecedent, %{})
+    %{engine_state | fuzzy_antecedent: fuzzy_antecedent}
   end
 
   @impl EngineAdapter
-  def inference(%State{fuzzy_antecedents: fuzzy_antecedents} = engine_state, rules, consequent) do
+  def inference(%State{fuzzy_antecedent: fuzzy_antecedent} = engine_state, rules, consequent) do
     fuzzy_consequent =
-      fuzzy_antecedents
+      fuzzy_antecedent
       |> inference_engine(rules, consequent)
       |> output_combination()
 
@@ -34,25 +34,25 @@ defmodule Flex.EngineAdapter.Mamdani do
     %{engine_state | crisp_output: centroid_method(fuzzy_consequent)}
   end
 
-  def inference_engine(_fuzzy_antecedents, [], consequent), do: consequent
+  def inference_engine(_fuzzy_antecedent, [], consequent), do: consequent
 
-  def inference_engine(fuzzy_antecedents, [rule | tail], consequent) do
-    rule_parameters = get_rule_parameters(rule.antecedents, fuzzy_antecedents, []) ++ [consequent]
+  def inference_engine(fuzzy_antecedent, [rule | tail], consequent) do
+    rule_parameters = get_rule_parameters(rule.antecedent, fuzzy_antecedent, []) ++ [consequent]
 
     consequent =
       if is_function(rule.statement) do
         rule.statement.(rule_parameters)
       else
-        args = Map.merge(fuzzy_antecedents, %{consequent.tag => consequent})
+        args = Map.merge(fuzzy_antecedent, %{consequent.tag => consequent})
         statement(rule.statement, args)
       end
 
-    inference_engine(fuzzy_antecedents, tail, consequent)
+    inference_engine(fuzzy_antecedent, tail, consequent)
   end
 
   defp output_combination(cons_var) do
     output = Enum.map(cons_var.fuzzy_sets, fn x -> root_sum_square(cons_var.mf_values[x.tag]) end)
-    %{cons_var | tmp: output}
+    %{cons_var | rule_output: output}
   end
 
   defp root_sum_square(nil), do: 0.0
@@ -69,7 +69,7 @@ defmodule Flex.EngineAdapter.Mamdani do
   """
   @spec centroid_method(Flex.Variable.t()) :: float
   def centroid_method(%Variable{type: type} = fuzzy_var) when type == :consequent do
-    fuzzy_to_crisp(fuzzy_var.fuzzy_sets, fuzzy_var.tmp, 0, 0)
+    fuzzy_to_crisp(fuzzy_var.fuzzy_sets, fuzzy_var.rule_output, 0, 0)
   end
 
   defp fuzzy_to_crisp([], _input, nom, den), do: nom / den
