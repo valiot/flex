@@ -1,6 +1,6 @@
 <br>
 <div align="center">
-  <img src="assets/valiot-logo-blue.png" alt="Valiot Logo" width="192" height="57" />
+  <img src="https://raw.githubusercontent.com/valiot/flex/master/assets/valiot-logo-blue.png" alt="Valiot Logo" width="192" height="57" />
 </div>
 <br>  
 
@@ -239,7 +239,7 @@ The docs can be found at [https://hexdocs.pm/flex](https://hexdocs.pm/flex).
   * Issue a github pull request (fill the PR template).
 
 ## License
-  See [LICENSE](./LICENSE).
+  See [LICENSE](https://github.com/valiot/flex/blob/master/LICENSE).
 
 ## TODO
   * Add more membership functions.

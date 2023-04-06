@@ -32,14 +32,7 @@ defmodule Flex.MixProject do
   end
 
   defp aliases do
-    [docs: ["docs", &copy_images/1]]
-  end
-
-  defp copy_images(_) do
-    File.ls!("assets")
-    |> Enum.each(fn x ->
-      File.cp!("assets/#{x}", "doc/assets/#{x}")
-    end)
+    []
   end
 
   defp package() do
