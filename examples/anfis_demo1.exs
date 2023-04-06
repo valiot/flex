@@ -203,3 +203,5 @@ desired_dataset = for {index, desired_data} <- Enum.zip(1..121, outputs), do: [i
       desired_dataset,
       predicted_dataset
     ])
+
+IO.puts(System.compute(s_pid, [0, 0]))
