@@ -41,7 +41,7 @@ defmodule Flex.MembershipFun do
 
         # Right side
         a != b and a < x and x < b ->
-          (a - x) / (a - b)
+          (x - b) / (a - b)
 
         # Catch all
         true ->
