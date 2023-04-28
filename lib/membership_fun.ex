@@ -13,7 +13,7 @@ defmodule Flex.MembershipFun do
       cond do
         # Left side
         a != b and a < x and x < b ->
-          (a - x) / (a - b)
+          (x - a) / (b - a)
 
         # Right side
         x >= b ->
@@ -41,7 +41,7 @@ defmodule Flex.MembershipFun do
 
         # Right side
         a != b and a < x and x < b ->
-          (x - a) / (b - a)
+          (a - x) / (b - a)
 
         # Catch all
         true ->
