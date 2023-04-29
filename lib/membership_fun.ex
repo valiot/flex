@@ -102,7 +102,7 @@ defmodule Flex.MembershipFun do
 
   # Right side
   defp trapezoidal_func(x, _a, _b, c, d) when c != d and c < x and x < d,
-    do: (c - x) / (c - d)
+    do: (x - d) / (c - d)
 
   # Catch All
   defp trapezoidal_func(_x, _a, _b, _c, _d), do: 0
