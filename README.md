@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/valiot/flex/master/assets/flex_white.png" alt="FLex Logo" width="512" height="151" />
+  <img src="https://raw.githubusercontent.com/valiot/flex/master/assets/flex-logo.png" alt="FLex Logo" width="512" height="121" />
 </div>
 
 ***
