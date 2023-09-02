@@ -1,8 +1,14 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/valiot/flex/master/assets/flex_white.png" alt="FLex Logo" width="512" height="151" />
+</div>
+
+***
 <br>
 <div align="center">
-  <img src="https://raw.githubusercontent.com/valiot/flex/master/assets/valiot-logo-blue.png" alt="Valiot Logo" width="192" height="57" />
+  <img src="https://raw.githubusercontent.com/valiot/flex/master/assets/valiot-logo-blue.png" alt="Valiot Logo" width="384" height="80" />
 </div>
-<br>  
+<br>
+
 
 # FLex
 
