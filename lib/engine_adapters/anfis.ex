@@ -175,8 +175,8 @@ defmodule Flex.EngineAdapter.ANFIS do
     end
   end
 
-  defp dwi_dmuij(0.0, 0.0), do: 1
-  defp dwi_dmuij(w_i, 0.0), do: w_i / 1.0e-10
+  defp dwi_dmuij(+0.0, +0.0), do: 1
+  defp dwi_dmuij(w_i, +0.0), do: w_i / 1.0e-10
   defp dwi_dmuij(w_i, muij), do: w_i / muij
 
   defp compute_output_level(cons_var, input_vector) do
